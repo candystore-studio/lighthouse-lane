@@ -1,0 +1,9 @@
+[environments.dev]
+theme = "188538552700"
+store = "lighthouselane"
+
+[environments.ignore-settings]
+theme = "188538552700"
+store = "lighthouselane"
+ignore = ["sections/*.json", "templates/*", "config/*", "locales/*"]
+allow-live = true
