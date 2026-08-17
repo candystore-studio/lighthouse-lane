@@ -1,0 +1,440 @@
+/*
+  Lighthouse Lane — custom theme layer
+  ------------------------------------
+  Loaded from layout/theme.liquid immediately after `color-palette`, so it wins
+  over the two token snippets and still loses to app CSS in content_for_header.
+
+  Rule for this file: anything a Horizon setting can express lives in
+  config/settings_data.json or the section JSON. This file only carries what
+  settings cannot — the brand faces, desktop/mobile type splits, and the
+  hand-made decorative layer (stitch seams, tape, rotations, wavy links).
+
+  Contents
+    1. Brand faces (self-hosted)
+    2. Token overrides
+    3. Type splits the settings cannot reach
+    4. Global components: links, buttons, inputs, focus
+    5. Header
+    6. Footer
+*/
+
+/* ==========================================================================
+   1. Brand faces — self-hosted woff2, latin + latin-ext, font-display: swap
+   Bevan and Caveat are not in Shopify's font library, so all three faces are
+   self-hosted for consistency: one origin, no Google request, no picker
+   dependency. The four font pickers are set to Helvetica, a system face, so
+   Shopify emits no @font-face and no preload for a font the theme never uses
+   (theme check flags the handle as deprecated; it is chosen for exactly that
+   reason — nothing is fetched, and every family token below overrides it).
+   Changing a font picker will not change the typography — change it here.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Bevan';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('ll-bevan-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Bevan';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('ll-bevan-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('ll-caveat-400-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('ll-caveat-400-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Karla';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('ll-karla-400-800-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Karla';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('ll-karla-400-800-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Karla';
+  font-style: italic;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('ll-karla-italic-400-800-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ==========================================================================
+   2. Token overrides
+   ========================================================================== */
+
+:root {
+  /* Three voices: the signwriter, Katie's pen, the price-ticket printer.
+     `subheading` is the Karla 800 emphasis slot (nav, UI labels, buttons). */
+  --font-body--family: 'Karla', system-ui, -apple-system, sans-serif;
+  --font-body--style: normal;
+  --font-body--weight: 400;
+
+  --font-subheading--family: 'Karla', system-ui, -apple-system, sans-serif;
+  --font-subheading--style: normal;
+  --font-subheading--weight: 800;
+
+  --font-heading--family: 'Bevan', Georgia, serif;
+  --font-heading--style: normal;
+  --font-heading--weight: 400;
+
+  --font-accent--family: 'Caveat', 'Segoe Script', cursive;
+  --font-accent--style: normal;
+  --font-accent--weight: 700;
+
+  /* Design frame is 1440 with 40px gutters, so the content column is 1360. */
+  --narrow-page-width: 85rem;
+
+  /* Brand palette. The four Horizon palette slots carry background, ink, moor
+     green and vermillion; everything else the design uses lives here. */
+  --ll-paper: #f8f3e6;
+  --ll-paper-card: #fdfaf0;
+  --ll-paper-tint: #f1ead8;
+  --ll-paper-aged: #efe7d2;
+  --ll-ink: #2e2a24;
+  --ll-peat: #6e6454;
+  --ll-moor: #43573e;
+  --ll-moor-hover: #33432f;
+  --ll-vermillion: #bf4a33;
+  --ll-vermillion-deep: #a03a26;
+  --ll-border-strong: #c9bc9f;
+  --ll-stitch-color: #d6cbb1;
+  --ll-hairline: #e4dbc4;
+  --ll-faded: #b3a78c;
+  --ll-star: #b07c1b;
+
+  /* Recurring motifs */
+  --ll-stitch: 2px dashed var(--ll-stitch-color);
+  --ll-hairline-border: 1px solid var(--ll-hairline);
+  --ll-shadow-offset: 3px 4px 0 rgb(46 42 36 / 0.12);
+  --ll-tape-fill: rgb(214 193 133 / 0.55);
+  --ll-tape-border: rgb(160 140 80 / 0.25);
+  --ll-stitched-outline: 2px dashed rgb(248 243 230 / 0.45);
+
+  /* Focus: 2px moor green, 2px offset (brand guide 06). */
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+
+  /* Controls are 48px in the design, 44px minimum on touch. */
+  --ll-control-height: 48px;
+}
+
+/* The design's mobile frame is 390 with 20px gutters. */
+@media screen and (max-width: 749px) {
+  .page-width-wide,
+  .page-width-normal,
+  .page-width-narrow,
+  .page-width-content {
+    --page-margin: 20px;
+  }
+}
+
+/* ==========================================================================
+   3. Type splits the settings cannot reach
+   Horizon's size selects jump 40 → 48 and fix any size under 48px, so the
+   desktop values are set as close as the picker allows and the mobile halves
+   of the scale are declared here. Keep in step with the brand guide table.
+   ========================================================================== */
+
+@media screen and (max-width: 749px) {
+  :root {
+    --font-size--h1: 1.875rem; /* 30px */
+    --font-size--h2: 1.4375rem; /* 23px */
+  }
+}
+
+/* ==========================================================================
+   4. Global components
+   ========================================================================== */
+
+/* Links — solid vermillion underline, hover goes wavy: the signwriter's
+   flourish. Buttons and the wordmark opt out. */
+a:where(:not(.button, .button-secondary, .button-custom, .button-unstyled, .header-logo, .menu-list__link)):hover {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--ll-vermillion);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Moor green focus ring, except where the surface is already moor green. */
+a:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.button-unstyled:focus-visible {
+  outline-color: var(--ll-moor);
+}
+
+/* On the moor green bar the cream text is the contrasting ring. Buttons keep
+   Horizon's own focus colour, which is already the button's fill. */
+.announcement-bar :focus-visible {
+  outline-color: currentcolor;
+}
+
+/* Buttons — 48px tall, Karla 800, print-block corners. Horizon has no weight
+   setting for buttons and derives their padding from the type scale. Icon-only
+   chrome (close, back) keeps its own 44px square sizing. */
+:is(.button, .button-secondary, .button-custom, button.shopify-payment-button__button--unbranded):not(
+    .close-button,
+    .menu-drawer__back-button,
+    .button-unstyled
+  ) {
+  --button-padding-block: 0px; /* stylelint-disable-line declaration-property-value-disallowed-list */
+  --button-padding-inline: 28px;
+
+  min-height: var(--ll-control-height);
+  font-weight: var(--font-subheading--weight);
+}
+
+@media screen and (max-width: 749px) {
+  :is(.button, .button-secondary, .button-custom, button.shopify-payment-button__button--unbranded):not(
+      .close-button,
+      .menu-drawer__back-button,
+      .button-unstyled
+    ) {
+    min-height: 50px;
+  }
+}
+
+/* Stitched inner outline on primary buttons — a signwriter's double rule.
+   Drawn as a pseudo-element rather than `outline`, so the focus ring stays
+   free for focus. */
+.button:not(.button-secondary, .button-custom, .button-unstyled, .close-button, .menu-drawer__back-button) {
+  position: relative;
+}
+
+.button:not(.button-secondary, .button-custom, .button-unstyled, .close-button, .menu-drawer__back-button)::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: var(--ll-stitched-outline);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Sold out / disabled reads as a scribbled-over ticket, not a faded button. */
+.button[aria-disabled='true'],
+.button-secondary[aria-disabled='true'],
+.button:disabled {
+  --button-background-color: var(--ll-paper-tint);
+  --button-color: var(--ll-peat);
+  --button-border-color: var(--ll-faded);
+
+  opacity: 1;
+  border: 1px dashed var(--ll-faded);
+}
+
+.button[aria-disabled='true']::after,
+.button:disabled::after {
+  content: none;
+}
+
+/* ==========================================================================
+   5. Header
+   Colours, borders, sticky behaviour and the text-style actions are all
+   section settings. Only the paddings and the wordmark face live here.
+   ========================================================================== */
+
+header-component.header {
+  --header-padding: 16px;
+}
+
+@media screen and (max-width: 749px) {
+  header-component.header {
+    --header-padding: 8px;
+  }
+}
+
+/* Wordmark. Until Katie's lighthouse mark is uploaded as the logo, Horizon
+   falls back to the shop name as text — which is the design's wordmark.
+   The block writes --font-family inline, so the face is set on the property. */
+a.header-logo {
+  font-family: var(--font-heading--family);
+  font-style: var(--font-heading--style);
+  font-weight: var(--font-heading--weight);
+  font-size: 1.0625rem; /* 17px */
+  letter-spacing: 0.01em;
+}
+
+@media screen and (min-width: 750px) {
+  a.header-logo {
+    font-size: 1.25rem; /* 20px */
+  }
+}
+
+/* -- Menu drawer -----------------------------------------------------------
+   Accordion, dividers and colours are block settings. The drawer's own type
+   scale and the +/- expanders are written inline by `menu-font-styles`, so the
+   design values are set on the items rather than on the custom properties. */
+
+.menu-drawer {
+  max-width: 352px;
+  box-shadow: 4px 0 0 rgb(46 42 36 / 0.15);
+}
+
+.menu-drawer__backdrop {
+  background-color: rgb(46 42 36 / 0.45);
+  backdrop-filter: none;
+}
+
+.menu-drawer .menu-drawer__menu-item {
+  padding-inline: 20px;
+}
+
+.menu-drawer .menu-drawer__menu-item--mainlist {
+  min-height: 56px;
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.3;
+}
+
+.menu-drawer .menu-drawer__list-item--divider {
+  border-block-end-color: var(--ll-stitch-color);
+}
+
+/* Sub-levels sit on aged paper, a step back from the page. */
+.menu-drawer .menu-drawer__menu--childlist {
+  background-color: var(--ll-paper-aged);
+}
+
+.menu-drawer .menu-drawer__menu-item--child {
+  min-height: 48px;
+  padding-inline: 32px;
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+}
+
+/* Expanders are drawn with Katie's pen, not an icon. The empty alt text keeps
+   the glyph out of the accessibility tree. */
+.menu-drawer summary.menu-drawer__menu-item .svg-wrapper {
+  display: none;
+}
+
+.menu-drawer summary.menu-drawer__menu-item::after {
+  content: '+';
+  content: '+' / ''; /* stylelint-disable-line declaration-block-no-duplicate-properties */
+  font-family: var(--font-accent--family);
+  font-weight: var(--font-accent--weight);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--ll-vermillion);
+  padding-inline-start: var(--padding-xl);
+}
+
+.menu-drawer details[open] > summary.menu-drawer__menu-item::after {
+  content: '−';
+  content: '−' / ''; /* stylelint-disable-line declaration-block-no-duplicate-properties */
+}
+
+.menu-drawer details[open] > summary.menu-drawer__menu-item--mainlist {
+  color: var(--ll-moor);
+}
+
+/* ==========================================================================
+   6. Footer
+   ========================================================================== */
+
+/* The footer opens with a 3px solid moor green seam (brand guide 05). */
+footer > .shopify-section:first-child {
+  border-block-start: 3px solid var(--ll-moor);
+}
+
+/* Design columns are 1.4fr 1fr 1fr 1.4fr — the brand and newsletter columns
+   carry more copy than the two link lists. Horizon's grid is equal columns. */
+@media screen and (min-width: 990px) {
+  .footer-content[style*='--grid-columns: 4'] {
+    grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
+  }
+}
+
+/* Mobile leads with the newsletter, as the design does, then the link lists. */
+@media screen and (max-width: 749px) {
+  .footer-content > :last-child {
+    order: -1;
+  }
+}
+
+/* Footer links are 14px Karla; Horizon's link presets only reach the global
+   type scale, where paragraph is 16px. */
+.footer-content .menu__item {
+  font-size: var(--font-size--sm);
+}
+
+.footer-content .menu__item a:hover {
+  text-decoration-color: var(--ll-vermillion);
+}
+
+/* The design pairs the footer link lists into two columns on mobile. */
+@media screen and (max-width: 749px) {
+  .footer-content .menu .details-content ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--gap-xs);
+    row-gap: var(--spacing--size);
+  }
+
+  .footer-content .menu .menu__item + .menu__item {
+    margin-block-start: 0;
+  }
+}
+
+/* Section seams are stitched, not ruled. */
+.footer-utilities .utilities {
+  border-block-start-style: dashed;
+}
+
+/* Newsletter row — 48px controls, 14px inline padding, per the design. */
+.email-signup-block .email-signup__input,
+.email-signup-block .email-signup__button--text {
+  min-height: var(--ll-control-height);
+  padding-block: 0;
+}
+
+.email-signup-block .email-signup__input {
+  padding-inline: 14px;
+}
+
+.email-signup-block .email-signup__button--text {
+  padding-inline: 20px;
+}

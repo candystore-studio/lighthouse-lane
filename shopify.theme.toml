@@ -2,8 +2,16 @@
 theme = "188538552700"
 store = "lighthouselane"
 
-[environments.ignore-settings]
+# Code-only pushes: leaves merchant-editable content alone (templates, the
+# header/footer group JSON, settings_data) while shipping Liquid, CSS and JS.
+# Use this once the store is live and Howard is editing content himself.
+# `allow-live` is deliberately absent so a push can never overwrite the live
+# theme without an explicit flag.
+[environments.dev-code-only]
 theme = "188538552700"
 store = "lighthouselane"
-ignore = ["sections/*.json", "templates/*", "config/*", "locales/*"]
-allow-live = true
+ignore = [
+  "templates/*.json",
+  "sections/*-group.json",
+  "config/settings_data.json",
+]

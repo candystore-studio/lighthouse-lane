@@ -1,0 +1,192 @@
+{% comment %}
+  Hand aside — Katie's pen.
+
+  The one block that carries the dialect voice everywhere: hero eyebrows, the
+  price note on a product, the newsletter reassurance, the footer sign-off.
+  Public block, so it drops into any @theme surface (groups, section.liquid,
+  product details, heroes) without touching a stock file.
+
+  Brand rules it enforces by construction: Caveat 700, never below 15px,
+  rotation never past 1.5 degrees, one aside per section.
+{% endcomment %}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign text = block_settings.text
+-%}
+
+{%- if text != blank -%}
+  <p
+    class="ll-hand-aside spacing-style"
+    style="
+      {% render 'spacing-style', settings: block_settings %}
+      --ll-hand-aside-size: {{ block_settings.font_size }};
+      --ll-hand-aside-rotation: {{ block_settings.rotation }}deg;
+      --ll-hand-aside-align: {{ block_settings.alignment }};
+      {% if block_settings.text_color != blank %}--ll-hand-aside-color: {{ block_settings.text_color }};{% endif %}
+    "
+    {{ block.shopify_attributes }}
+  >
+    {{- text -}}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .ll-hand-aside {
+    display: block;
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-style: var(--font-accent--style);
+    font-weight: var(--font-accent--weight);
+    font-size: var(--ll-hand-aside-size, 1.3125rem);
+    line-height: 1.25;
+    color: var(--ll-hand-aside-color, var(--ll-vermillion));
+    text-align: var(--ll-hand-aside-align, left);
+    transform: rotate(var(--ll-hand-aside-rotation, -1.5deg));
+    transform-origin: var(--ll-hand-aside-align, left);
+    width: fit-content;
+  }
+
+  .ll-hand-aside a {
+    color: inherit;
+    text-decoration-color: currentcolor;
+  }
+
+  /* Asides step down a notch on mobile but never below the 15px brand floor. */
+  @media screen and (max-width: 749px) {
+    .ll-hand-aside {
+      font-size: max(0.9375rem, calc(var(--ll-hand-aside-size, 1.3125rem) - 0.125rem));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hand aside",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "t:settings.text",
+      "default": "— come say ey up"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "t:settings.size",
+      "info": "Caveat is never set below 15px.",
+      "options": [
+        {
+          "value": "0.9375rem",
+          "label": "15px"
+        },
+        {
+          "value": "1.0625rem",
+          "label": "17px"
+        },
+        {
+          "value": "1.1875rem",
+          "label": "19px"
+        },
+        {
+          "value": "1.3125rem",
+          "label": "21px"
+        },
+        {
+          "value": "1.5rem",
+          "label": "24px"
+        },
+        {
+          "value": "1.75rem",
+          "label": "28px"
+        },
+        {
+          "value": "2.375rem",
+          "label": "38px"
+        }
+      ],
+      "default": "1.3125rem"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "rotation",
+      "label": "Rotation",
+      "min": -1.5,
+      "max": 1.5,
+      "step": 0.5,
+      "unit": "deg",
+      "default": -1.5
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hand aside"
+    }
+  ]
+}
+{% endschema %}

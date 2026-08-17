@@ -1,0 +1,20 @@
+{%- doc -%}
+  Lighthouse Lane custom layer.
+
+  Rendered from layout/theme.liquid immediately after `color-palette`, so
+  `ll-custom.css` overrides both token snippets and still loses to app CSS in
+  `content_for_header`. This is the theme's only Lighthouse Lane stylesheet
+  hook — keep it to one file so the brand layer stays a single request.
+
+  Bevan (wordmark, headings) and Karla (body, nav) render above the fold on
+  every template, so their latin subsets are preloaded. Caveat is only ever a
+  short aside and is left to load with the stylesheet.
+
+  @example
+  {%- render 'll-stylesheets' -%}
+{%- enddoc -%}
+
+{{ 'll-bevan-400-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
+{{ 'll-karla-400-800-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
+
+{{ 'll-custom.css' | asset_url | stylesheet_tag: preload: true }}
