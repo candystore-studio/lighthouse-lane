@@ -613,7 +613,7 @@
             "name": "Haworth",
             "details": "<p>Address 1<br>Open daily 10am–5pm</p>",
             "link_label": "Get directions",
-            "mobile_style": "card"
+            "mobile_open": true
           }
         },
         "shop_skipton": {
@@ -622,7 +622,7 @@
             "name": "Skipton",
             "details": "<p>Address 2<br>Open daily 10am–5pm</p>",
             "link_label": "Get directions",
-            "mobile_style": "row"
+            "mobile_open": false
           }
         },
         "shop_harrogate": {
@@ -631,7 +631,7 @@
             "name": "Harrogate",
             "details": "<p>Address 3<br>Open daily 10am–5pm</p>",
             "link_label": "Get directions",
-            "mobile_style": "row"
+            "mobile_open": false
           }
         }
       },

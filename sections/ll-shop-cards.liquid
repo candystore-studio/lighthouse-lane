@@ -8,7 +8,16 @@
   Cards are `_ll-shop-card` blocks; the string-tag rotations and the middle
   card's drop are dealt here by position so the cards themselves stay clean.
   Reused on the About page with map imagery.
+
+  On mobile the grid is a disclosure group: one card open at a time, handled
+  by <ll-shop-cards>. Desktop is untouched — every card open, as designed.
 {% endcomment %}
+
+<script
+  src="{{ 'll-shop-cards.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
 
 {%- liquid
   if section.settings.background_color != blank
@@ -31,9 +40,9 @@
       </div>
     {%- endif -%}
 
-    <div class="ll-shop-cards__grid">
+    <ll-shop-cards class="ll-shop-cards__grid" data-mobile-breakpoint="749">
       {% content_for 'blocks' %}
-    </div>
+    </ll-shop-cards>
   </div>
 </div>
 
@@ -192,7 +201,7 @@
           "settings": {
             "name": "Haworth",
             "details": "<p>Address 1<br>Open daily 10am–5pm</p>",
-            "mobile_style": "card"
+            "mobile_open": true
           }
         },
         "shop_skipton": {
@@ -200,7 +209,7 @@
           "settings": {
             "name": "Skipton",
             "details": "<p>Address 2<br>Open daily 10am–5pm</p>",
-            "mobile_style": "row"
+            "mobile_open": false
           }
         },
         "shop_harrogate": {
@@ -208,7 +217,7 @@
           "settings": {
             "name": "Harrogate",
             "details": "<p>Address 3<br>Open daily 10am–5pm</p>",
-            "mobile_style": "row"
+            "mobile_open": false
           }
         }
       },

@@ -5,24 +5,31 @@
   Bevan place name, address/hours line and a "Get directions" link, with the
   punched hole and string-tag rotation drawn in CSS by the parent section.
 
-  Mobile has two shapes, per the design: the lead shop keeps its full card,
-  the rest collapse to compact rows with a chevron (the directions link
-  stretches over the whole row so the tap target is the card).
+  On mobile the card is a disclosure: the compact row is the closed state and
+  opening it reveals the shopfront photo above the name, exactly as the
+  design's lead card looks. The photo sits above the name row in the design,
+  which is why this is not a <details> — its content must follow the summary.
+  The toggle is a stretched button over the body so the whole row is the tap
+  target; `ll-shop-cards.js` handles breakpoints and exclusivity.
+
+  Desktop is unchanged: every card fully open, toggle hidden and disabled.
 {% endcomment %}
 
 {%- liquid
   assign block_settings = block.settings
   assign sizes = '(min-width: 750px) 33vw, 100vw'
   assign widths = '320, 480, 640, 960, 1280'
+  assign media_id = 'll-shop-media-' | append: block.id
 -%}
 
 <article
-  class="ll-shop-card ll-shop-card--mobile-{{ block_settings.mobile_style }}"
+  class="ll-shop-card"
+  data-default-open="{% if block_settings.mobile_open %}true{% else %}false{% endif %}"
   {{ block.shopify_attributes }}
 >
   <span class="ll-shop-card__hole" aria-hidden="true"></span>
 
-  <div class="ll-shop-card__media">
+  <div class="ll-shop-card__media" id="{{ media_id }}">
     {%- if block_settings.image -%}
       {{
         block_settings.image
@@ -48,7 +55,22 @@
         {{- block_settings.link_label | default: 'Get directions' -}}
       </a>
     {%- endif -%}
-    <span class="ll-shop-card__chevron" aria-hidden="true">›</span>
+
+    {%- comment -%}
+      Stretched over the body on mobile only, and disabled on desktop by the
+      custom element so it never reaches the keyboard there.
+    {%- endcomment -%}
+    <button
+      type="button"
+      class="ll-shop-card__toggle"
+      aria-expanded="true"
+      aria-controls="{{ media_id }}"
+    >
+      <span class="visually-hidden">
+        {{- block_settings.name | default: 'Shop' | strip_html }} — show photo
+      </span>
+      <span class="ll-shop-card__chevron" aria-hidden="true">›</span>
+    </button>
   </div>
 </article>
 
@@ -101,6 +123,7 @@
   }
 
   .ll-shop-card__body {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -136,11 +159,12 @@
     text-underline-offset: 4px;
   }
 
-  .ll-shop-card__chevron {
+  /* Desktop shows every card in full, so the disclosure control never
+     appears; it is also disabled in JS, keeping it out of the tab order. */
+  .ll-shop-card__toggle {
     display: none;
   }
 
-  /* Compact row — mobile only, per the design. */
   @media screen and (max-width: 749px) {
     .ll-shop-card__hole {
       top: 8px;
@@ -149,57 +173,92 @@
       height: 12px;
     }
 
-    .ll-shop-card--mobile-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px 16px 32px;
+    /* The whole row is the tap target, at the design's 16px row padding. */
+    .ll-shop-card__toggle {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
     }
 
-    .ll-shop-card--mobile-row .ll-shop-card__hole {
+    .ll-shop-card__chevron {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      translate: 0 -50%;
+      font-size: 1.125rem;
+      color: var(--ll-moor, #43573e);
+      transition: rotate var(--animation-speed, 0.15s) var(--animation-easing, ease);
+    }
+
+    .ll-shop-card__toggle:focus-visible {
+      outline: var(--focus-outline-width, 2px) solid var(--ll-moor, #43573e);
+      outline-offset: calc(var(--focus-outline-offset, 2px) * -1);
+    }
+
+    /* Closed — the design's compact row: no photo, hole centred on the left
+       edge, body inset past it, chevron pointing on. */
+    .ll-shop-card[data-open='false'] .ll-shop-card__media {
+      display: none;
+    }
+
+    .ll-shop-card[data-open='false'] .ll-shop-card__hole {
       top: 50%;
       left: 10px;
       translate: 0 -50%;
     }
 
-    .ll-shop-card--mobile-row .ll-shop-card__media {
+    .ll-shop-card[data-open='false'] .ll-shop-card__body {
+      gap: 2px;
+      padding: 16px 20px 16px 32px;
+    }
+
+    /* Open — the design's lead card: photo on top, body beneath, chevron
+       turned down. The turned chevron is the only addition to the mockup:
+       without it an open card has no visible way back.
+
+       Matched on :not([data-open='false']) so the no-JS state, which carries
+       no attribute at all, still renders as the design's open card. */
+    .ll-shop-card:not([data-open='false']) .ll-shop-card__media {
+      height: 140px;
+    }
+
+    .ll-shop-card:not([data-open='false']) .ll-shop-card__body {
+      gap: 4px;
+      padding: 14px 20px 16px;
+    }
+
+    .ll-shop-card:not([data-open='false']) .ll-shop-card__chevron {
+      rotate: 90deg;
+    }
+
+    /* No disclosure control until the element is upgraded, or it would be a
+       dead chevron over a card that cannot collapse. */
+    ll-shop-cards:not(:defined) .ll-shop-card__toggle {
       display: none;
     }
 
-    .ll-shop-card--mobile-row .ll-shop-card__body {
-      flex: 1;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2px 12px;
-      padding: 0;
-      flex-wrap: wrap;
+    .ll-shop-card__name {
+      font-size: 1rem; /* 16px */
     }
 
-    .ll-shop-card--mobile-row .ll-shop-card__name {
-      font-size: 1rem;
-      flex-basis: 100%;
+    .ll-shop-card__details {
+      font-size: 0.8125rem; /* 13px */
     }
 
-    .ll-shop-card--mobile-row .ll-shop-card__details {
-      font-size: 0.8125rem;
+    /* The mobile design carries no directions link on the card. */
+    .ll-shop-card__link {
+      display: none;
     }
+  }
 
-    /* The whole row is the tap target; the label hides but stays readable
-       to assistive tech, and the chevron takes its visual place. */
-    .ll-shop-card--mobile-row .ll-shop-card__link {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      text-indent: -200vw;
-      text-decoration: none;
-    }
-
-    .ll-shop-card--mobile-row .ll-shop-card__chevron {
-      display: block;
-      margin-inline-start: auto;
-      font-size: 1.125rem;
-      color: var(--ll-moor, #43573e);
+  @media (prefers-reduced-motion: reduce) {
+    .ll-shop-card__chevron {
+      transition: none;
     }
   }
 {% endstylesheet %}
@@ -230,7 +289,7 @@
       "type": "url",
       "id": "link",
       "label": "Directions link",
-      "info": "Usually a Google Maps link."
+      "info": "Usually a Google Maps link. Shown on desktop only, as designed."
     },
     {
       "type": "text",
@@ -239,20 +298,11 @@
       "default": "Get directions"
     },
     {
-      "type": "select",
-      "id": "mobile_style",
-      "label": "Mobile layout",
-      "options": [
-        {
-          "value": "card",
-          "label": "Full card"
-        },
-        {
-          "value": "row",
-          "label": "Compact row"
-        }
-      ],
-      "default": "row"
+      "type": "checkbox",
+      "id": "mobile_open",
+      "label": "Open by default on mobile",
+      "info": "Only one shop can be open at a time. Tick this on the shop you want showing when the page loads.",
+      "default": false
     }
   ]
 }
