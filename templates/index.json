@@ -1,97 +1,164 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */{
+{
   "sections": {
-    "hero_jVaWmY": {
-      "type": "hero",
+    "ll_hero": {
+      "type": "media-with-content",
       "blocks": {
-        "text_YLPk4p": {
-          "type": "text",
-          "name": "t:names.heading",
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
           "settings": {
-            "text": "<p>Browse our latest products</p>",
-            "text_color": "{{ settings.color_palette.background }}",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "media_type": "image",
+            "image_position": "cover"
+          }
         },
-        "button_H9gpTf": {
-          "type": "button",
-          "name": "t:names.button",
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
           "settings": {
-            "label": "Shop all",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "style_class": "button-custom",
-            "custom_button_background": "rgba(0,0,0,0)",
-            "custom_button_text": "{{ settings.color_palette.background }}",
-            "custom_button_border": "{{ settings.color_palette.background }}",
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 18
           },
-          "blocks": {}
+          "blocks": {
+            "hero_aside": {
+              "type": "ll-hand-aside",
+              "settings": {
+                "text": "Ey up! — independent · family-run · Yorkshire",
+                "font_size": "1.5rem",
+                "rotation": -1.5
+              }
+            },
+            "hero_heading": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h1>Lorem ipsum dolor sit amet consectetur</h1>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h1",
+                "font": "var(--font-heading--family)",
+                "line_height": "tight",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "hero_text": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim.</p>",
+                "width": "100%",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "hero_buttons": {
+              "type": "group",
+              "name": "t:names.buttons",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "gap": 14,
+                "width": "fill",
+                "width_mobile": "fill",
+                "height": "fit"
+              },
+              "blocks": {
+                "hero_button_primary": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Shop Bestsellers",
+                    "link": "shopify://collections/all",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "width": "fit-content",
+                    "width_mobile": "fill"
+                  }
+                },
+                "hero_button_secondary": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Katie's Art",
+                    "link": "shopify://collections/all",
+                    "open_in_new_tab": false,
+                    "style_class": "button-secondary",
+                    "width": "fit-content",
+                    "width_mobile": "fill"
+                  }
+                }
+              },
+              "block_order": ["hero_button_primary", "hero_button_secondary"]
+            }
+          },
+          "block_order": ["hero_aside", "hero_heading", "hero_text", "hero_buttons"]
         }
       },
-      "block_order": [
-        "text_YLPk4p",
-        "button_H9gpTf"
-      ],
-      "name": "t:names.hero",
+      "name": "t:names.media_with_content",
       "settings": {
-        "media_type_1": "image",
-        "media_type_2": "image",
-        "stack_media_on_mobile": false,
-        "custom_mobile_media": false,
-        "media_type_1_mobile": "image",
-        "media_type_2_mobile": "image",
-        "open_in_new_tab": false,
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "space-between",
-        "vertical_alignment": "flex-end",
-        "align_baseline": true,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "flex-end",
-        "gap": 24,
+        "media_position": "right",
+        "media_width": "medium",
+        "media_height": "auto",
         "section_width": "page-width",
-        "section_height": "medium",
-        "section_height_custom": 50,
-        "background_color": "rgba(0,0,0,0)",
-        "toggle_overlay": true,
-        "overlay_color": "#12121266",
-        "overlay_style": "solid",
-        "gradient_direction": "to bottom",
-        "blurred_reflection": false,
-        "reflection_opacity": 75,
-        "padding-block-start": 100,
-        "padding-block-end": 72
+        "extend_media": false,
+        "background_color": "#EFE7D2",
+        "padding-block-start": 40,
+        "padding-block-end": 40
       }
     },
-    "product_list_fa6P9H": {
+    "ll_trust": {
+      "type": "ll-trust-strip",
+      "blocks": {
+        "stat_shops": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "Three shops",
+            "label": "Haworth · Skipton · Harrogate"
+          }
+        },
+        "stat_years": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "11 years",
+            "label": "Trading since 2015"
+          }
+        },
+        "stat_family": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "Designed by us",
+            "label": "Katie & Howard, family run"
+          }
+        },
+        "stat_rating": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "4.9 rated",
+            "label": "212 reviews on Judge.me",
+            "show_star": true
+          }
+        }
+      },
+      "block_order": ["stat_shops", "stat_years", "stat_family", "stat_rating"],
+      "name": "Trust strip",
+      "settings": {
+        "background_color": "#43573E",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "ll_bestsellers": {
       "type": "product-list",
       "blocks": {
         "static-header": {
@@ -104,53 +171,55 @@
             "horizontal_alignment": "space-between",
             "vertical_alignment": "flex-end",
             "align_baseline": true,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center",
             "gap": 12,
             "width": "fill",
-            "custom_width": 100,
             "width_mobile": "fill",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "custom_height": 100,
-            "background_media": "none",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "height": "fit"
           },
           "blocks": {
-            "product_list_text_YFtzcL": {
-              "type": "_product-list-text",
-              "name": "t:names.collection_title",
+            "bestsellers_heading_group": {
+              "type": "group",
+              "name": "t:names.heading",
               "settings": {
-                "text": "<h3>{{ closest.collection.title }}</h3>",
+                "content_direction": "row",
+                "vertical_on_mobile": false,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "flex-end",
+                "align_baseline": true,
+                "gap": 16,
                 "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "h4",
-                "font": "var(--font-body--family)",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "width_mobile": "fit-content",
+                "height": "fit"
               },
-              "blocks": {}
+              "blocks": {
+                "bestsellers_title": {
+                  "type": "text",
+                  "name": "t:names.heading",
+                  "settings": {
+                    "text": "<h2>Bestsellers</h2>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h2",
+                    "font": "var(--font-heading--family)",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty"
+                  }
+                },
+                "bestsellers_aside": {
+                  "type": "ll-hand-aside",
+                  "settings": {
+                    "text": "— selling reyt well",
+                    "font_size": "1.5rem",
+                    "rotation": -1
+                  }
+                }
+              },
+              "block_order": ["bestsellers_title", "bestsellers_aside"]
             },
-            "product_list_button_MWeP9V": {
+            "bestsellers_view_all": {
               "type": "_product-list-button",
               "name": "t:names.product_list_button",
               "settings": {
@@ -158,101 +227,83 @@
                 "open_in_new_tab": false,
                 "style_class": "link",
                 "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
+                "width_mobile": "fit-content"
+              }
             }
           },
-          "block_order": [
-            "product_list_text_YFtzcL",
-            "product_list_button_MWeP9V"
-          ]
+          "block_order": ["bestsellers_heading_group", "bestsellers_view_all"]
         },
         "static-product-card": {
           "type": "_product-card",
           "name": "t:names.product_card",
           "static": true,
           "settings": {
-            "product_card_gap": 4,
+            "product_card_gap": 9,
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "border_radius": 0
           },
           "blocks": {
-            "product_card_gallery_677WP3": {
+            "bestsellers_card_gallery": {
               "type": "_product-card-gallery",
               "name": "t:names.product_card_media",
               "settings": {
-                "image_ratio": "adapt",
-                "border": "none",
+                "image_ratio": "portrait",
+                "border": "solid",
                 "border_width": 1,
                 "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "border_radius": 3
+              }
             },
-            "product_title_YXxMTj": {
+            "bestsellers_card_title": {
               "type": "product-title",
               "name": "t:names.product_title",
               "settings": {
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "rte",
+                "type_preset": "custom",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
+                "font_size": "0.875rem",
+                "line_height": "tight",
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 4,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "padding-block-start": 4
+              }
             },
-            "price_JQzVV4": {
+            "bestsellers_card_review": {
+              "type": "review",
+              "name": "t:names.review",
+              "settings": {
+                "show_number": true,
+                "alignment": "left"
+              }
+            },
+            "bestsellers_card_price": {
               "type": "price",
               "name": "t:names.product_price",
               "settings": {
                 "show_sale_price_first": true,
                 "show_installments": false,
                 "show_tax_info": false,
-                "type_preset": "h6",
+                "type_preset": "custom",
                 "width": "100%",
                 "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
+                "font": "var(--font-heading--family)",
+                "font_size": "0.875rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
-                "case": "none",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
+                "case": "none"
+              }
             }
           },
           "block_order": [
-            "product_card_gallery_677WP3",
-            "product_title_YXxMTj",
-            "price_JQzVV4"
+            "bestsellers_card_gallery",
+            "bestsellers_card_title",
+            "bestsellers_card_review",
+            "bestsellers_card_price"
           ]
         }
       },
@@ -261,25 +312,347 @@
         "collection": "all",
         "layout_type": "grid",
         "carousel_on_mobile": false,
-        "max_products": 8,
+        "max_products": 4,
         "columns": 4,
         "mobile_columns": "2",
-        "mobile_card_size": "60cqw",
-        "columns_gap": 8,
+        "columns_gap": 28,
         "rows_gap": 24,
-        "icons_style": "arrow",
-        "icons_shape": "none",
         "section_width": "page-width",
         "horizontal_alignment": "flex-start",
-        "gap": 28,
-        "background_color": "{{ settings.color_palette.background }}",
+        "gap": 32,
+        "padding-block-start": 72,
+        "padding-block-end": 64
+      }
+    },
+    "ll_postcards": {
+      "type": "ll-review-postcards",
+      "blocks": {
+        "postcard_1": {
+          "type": "_ll-postcard",
+          "settings": {
+            "rating": 5,
+            "quote": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.\"",
+            "author": "S. M.",
+            "source": "Verified buyer · Judge.me"
+          }
+        },
+        "postcard_2": {
+          "type": "_ll-postcard",
+          "settings": {
+            "rating": 5,
+            "quote": "\"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.\"",
+            "author": "D. H.",
+            "source": "Verified buyer · Judge.me · Haworth shop visit"
+          }
+        },
+        "postcard_3": {
+          "type": "_ll-postcard",
+          "settings": {
+            "rating": 5,
+            "quote": "\"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.\"",
+            "author": "R. N.",
+            "source": "Verified buyer · Judge.me · Skipton shop visit"
+          }
+        }
+      },
+      "block_order": ["postcard_1", "postcard_2", "postcard_3"],
+      "name": "Review postcards",
+      "settings": {
+        "summary": "4.9 from 212 reviews",
+        "heading_label": "Customer reviews",
+        "link_label": "Read all",
+        "background_color": "#EFE7D2",
+        "padding-block-start": 56,
+        "padding-block-end": 64
+      }
+    },
+    "ll_katies_art": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image_position": "cover"
+          }
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 14
+          },
+          "blocks": {
+            "art_aside": {
+              "type": "ll-hand-aside",
+              "settings": {
+                "text": "Katie's Art — from t' drawing board",
+                "font_size": "1.5rem",
+                "rotation": -1
+              }
+            },
+            "art_heading": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h2>Lorem ipsum dolor sit amet elit</h2>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h2",
+                "font": "var(--font-heading--family)",
+                "line_height": "tight",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "art_text": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>",
+                "width": "100%",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "art_button": {
+              "type": "button",
+              "name": "t:names.button",
+              "settings": {
+                "label": "Explore Katie's Art",
+                "link": "shopify://collections/all",
+                "open_in_new_tab": false,
+                "style_class": "button-secondary",
+                "width": "fit-content",
+                "width_mobile": "fill"
+              }
+            }
+          },
+          "block_order": ["art_aside", "art_heading", "art_text", "art_button"]
+        }
+      },
+      "name": "t:names.media_with_content",
+      "settings": {
+        "media_position": "left",
+        "media_width": "medium",
+        "media_height": "auto",
+        "section_width": "page-width",
+        "extend_media": false,
         "padding-block-start": 48,
         "padding-block-end": 48
+      }
+    },
+    "ll_instagram": {
+      "type": "section",
+      "blocks": {
+        "instagram_header": {
+          "type": "group",
+          "name": "t:names.header",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "gap": 12,
+            "width": "fill",
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "instagram_heading": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h2>Follow along</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h2",
+                "font": "var(--font-heading--family)",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "instagram_handle": {
+              "type": "button",
+              "name": "t:names.button",
+              "settings": {
+                "label": "@lighthouselane_uk",
+                "link": "https://www.instagram.com/",
+                "open_in_new_tab": true,
+                "style_class": "button-unstyled",
+                "width": "fit-content",
+                "width_mobile": "fit-content"
+              }
+            }
+          },
+          "block_order": ["instagram_heading", "instagram_handle"]
+        },
+        "instagram_grid": {
+          "type": "group",
+          "name": "t:names.group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "gap": 18,
+            "width": "fill",
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "instagram_image_1": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "square",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            },
+            "instagram_image_2": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "square",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            },
+            "instagram_image_3": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "square",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            },
+            "instagram_image_4": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "square",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            },
+            "instagram_image_5": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "square",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            }
+          },
+          "block_order": [
+            "instagram_image_1",
+            "instagram_image_2",
+            "instagram_image_3",
+            "instagram_image_4",
+            "instagram_image_5"
+          ]
+        }
+      },
+      "block_order": ["instagram_header", "instagram_grid"],
+      "name": "t:names.section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-start",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "ll_shops": {
+      "type": "ll-shop-cards",
+      "blocks": {
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "text": "— come say ey up, since 2015",
+            "font_size": "1.5rem",
+            "rotation": -1
+          }
+        },
+        "shop_haworth": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Haworth",
+            "details": "Address 1<br>Open daily 10am–5pm",
+            "link_label": "Get directions",
+            "mobile_style": "card"
+          }
+        },
+        "shop_skipton": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Skipton",
+            "details": "Address 2<br>Open daily 10am–5pm",
+            "link_label": "Get directions",
+            "mobile_style": "row"
+          }
+        },
+        "shop_harrogate": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Harrogate",
+            "details": "Address 3<br>Open daily 10am–5pm",
+            "link_label": "Get directions",
+            "mobile_style": "row"
+          }
+        }
+      },
+      "block_order": ["shop_haworth", "shop_skipton", "shop_harrogate"],
+      "name": "Shop cards",
+      "settings": {
+        "heading": "Visit our shops",
+        "background_color": "#EFE7D2",
+        "show_seam": true,
+        "padding-block-start": 72,
+        "padding-block-end": 72
       }
     }
   },
   "order": [
-    "hero_jVaWmY",
-    "product_list_fa6P9H"
+    "ll_hero",
+    "ll_trust",
+    "ll_bestsellers",
+    "ll_postcards",
+    "ll_katies_art",
+    "ll_instagram",
+    "ll_shops"
   ]
 }

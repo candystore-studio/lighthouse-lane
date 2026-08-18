@@ -16,6 +16,8 @@
     4. Global components: links, buttons, inputs, focus
     5. Header
     6. Footer
+    7. Product cards
+    8. Homepage — skin over stock sections (keys named in index.json)
 */
 
 /* ==========================================================================
@@ -142,6 +144,8 @@
   --ll-hairline: #e4dbc4;
   --ll-faded: #b3a78c;
   --ll-star: #b07c1b;
+  --ll-star-gold: #d9a94e;
+  --ll-radius-tight: 3px;
 
   /* Recurring motifs */
   --ll-stitch: 2px dashed var(--ll-stitch-color);
@@ -437,4 +441,169 @@ footer > .shopify-section:first-child {
 
 .email-signup-block .email-signup__button--text {
   padding-inline: 20px;
+}
+
+/* ==========================================================================
+   7. Product cards
+   Card composition (gallery / title / stars / price) lives in the template
+   JSON, where the price is already set to the heading face. This layer only
+   carries what block settings cannot express.
+   ========================================================================== */
+
+/* Card titles are Karla 700 — the block settings only reach 400/800. */
+product-card [ref='productTitleLink'] .text-block,
+product-card [ref='productTitleLink'] p {
+  font-weight: 700;
+}
+
+/* Amber ink stars, Caveat-adjacent count in peat — brand guide 04. */
+.rating-wrapper .stars {
+  color: var(--ll-star);
+}
+
+.rating-wrapper .rating-count {
+  color: var(--ll-peat);
+}
+
+/* Sale pricing reads as a corrected ticket: new price in vermillion, old
+   price struck through in peat. A compare-at price present means on sale. */
+product-price :has(> .compare-at-price) .price-item__group.price {
+  color: var(--ll-vermillion);
+}
+
+product-price .compare-at-price {
+  color: var(--ll-peat);
+  text-decoration: line-through;
+}
+
+/* ==========================================================================
+   8. Homepage — skin over stock sections
+   These selectors hang off the section keys authored in templates/index.json
+   (`ll_hero`, `ll_katies_art`, `ll_instagram`, …). Shopify renders those keys
+   into the wrapper id (shopify-section-template--…__ll_hero), so the suffix
+   match survives theme-id changes but WILL break if a key is renamed in the
+   editor JSON — rename both sides together.
+   ========================================================================== */
+
+/* -- Hero + Katie's Art: the taped-down photograph --------------------------
+   Stock media-with-content supplies layout and settings; the photo is tilted
+   and taped here. Tape sits above the frame, so clipping must stay off. */
+
+.shopify-section[id$='__ll_hero'] .media-block__media,
+.shopify-section[id$='__ll_katies_art'] .media-block__media {
+  position: relative;
+  overflow: visible;
+  border: 1px solid var(--ll-stitch-color);
+}
+
+.shopify-section[id$='__ll_hero'] .media-block__media::after,
+.shopify-section[id$='__ll_katies_art'] .media-block__media::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 76px;
+  height: 20px;
+  background: var(--ll-tape-fill);
+  border: 1px solid var(--ll-tape-border);
+  transform: translateX(-50%) rotate(var(--ll-media-tape-rotation, -2deg));
+}
+
+.shopify-section[id$='__ll_hero'] .media-block__media {
+  rotate: 1.2deg;
+}
+
+.shopify-section[id$='__ll_katies_art'] .media-block__media {
+  rotate: -1deg;
+  --ll-media-tape-rotation: 2deg;
+}
+
+/* Breathing room so the tilt and tape never kiss the section edges. */
+@media screen and (min-width: 750px) {
+  .shopify-section[id$='__ll_hero'] .media-block,
+  .shopify-section[id$='__ll_katies_art'] .media-block {
+    padding-block: 44px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .shopify-section[id$='__ll_hero'] .media-block,
+  .shopify-section[id$='__ll_katies_art'] .media-block {
+    padding-block-start: 20px;
+    padding-inline: 20px;
+  }
+}
+
+/* Seam chain between the homepage bands, per the design: the hero closes
+   with a stitch, the postcards open on a hairline, Katie's Art opens on a
+   stitch and closes on a hairline before the Instagram board. */
+.shopify-section[id$='__ll_hero'] .section {
+  border-block-end: var(--ll-stitch);
+}
+
+.shopify-section[id$='__ll_postcards'] .section {
+  border-block-start: 1px solid var(--ll-stitch-color);
+}
+
+.shopify-section[id$='__ll_katies_art'] .section {
+  border-block-start: var(--ll-stitch);
+  border-block-end: 1px solid var(--ll-stitch-color);
+}
+
+/* -- Instagram: five pinned-up squares --------------------------------------
+   Stock section.liquid with a group of image blocks; the pin-board scatter
+   is drawn here. */
+
+.shopify-section[id$='__ll_instagram'] .group-block-content:has(> .image-block) {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.shopify-section[id$='__ll_instagram'] .image-block:nth-child(5n + 1) {
+  rotate: -1deg;
+}
+
+.shopify-section[id$='__ll_instagram'] .image-block:nth-child(5n + 2) {
+  rotate: 0.8deg;
+  margin-block-start: 10px;
+}
+
+.shopify-section[id$='__ll_instagram'] .image-block:nth-child(5n + 3) {
+  rotate: -0.5deg;
+}
+
+.shopify-section[id$='__ll_instagram'] .image-block:nth-child(5n + 4) {
+  rotate: 1deg;
+  margin-block-start: 12px;
+}
+
+.shopify-section[id$='__ll_instagram'] .image-block:nth-child(5n) {
+  rotate: -0.9deg;
+}
+
+@media screen and (max-width: 749px) {
+  .shopify-section[id$='__ll_instagram'] .group-block-content:has(> .image-block) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  /* The design shows four squares on mobile; the fifth sits out. */
+  .shopify-section[id$='__ll_instagram'] .image-block:nth-child(5) {
+    display: none;
+  }
+
+  .shopify-section[id$='__ll_instagram'] .image-block {
+    margin-block-start: 0;
+  }
+}
+
+/* The hand-made tilt is decoration; take it off for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .shopify-section[id$='__ll_hero'] .media-block__media,
+  .shopify-section[id$='__ll_katies_art'] .media-block__media,
+  .shopify-section[id$='__ll_instagram'] .image-block {
+    rotate: none;
+  }
 }

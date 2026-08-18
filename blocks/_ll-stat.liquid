@@ -1,0 +1,98 @@
+{% comment %}
+  Stat — one plank of the painted sign board.
+
+  Private block, only offered inside the Trust strip section. Bevan figure on
+  top, quiet Karla sub-line beneath. The optional gold star is the Judge.me
+  rating plank ("★ 4.9 rated").
+
+  Colour is inherited from the section so the strip recolours as one board.
+{% endcomment %}
+
+{%- liquid
+  assign block_settings = block.settings
+-%}
+
+<div class="ll-stat" {{ block.shopify_attributes }}>
+  {%- if block_settings.stat != blank -%}
+    <p class="ll-stat__figure">
+      {%- if block_settings.show_star -%}
+        <span class="ll-stat__star" aria-hidden="true">★</span>
+      {%- endif -%}
+      {{- block_settings.stat -}}
+    </p>
+  {%- endif -%}
+  {%- if block_settings.label != blank -%}
+    <p class="ll-stat__label">{{ block_settings.label }}</p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .ll-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 24px 32px;
+  }
+
+  .ll-stat__figure {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    font-size: 1.1875rem; /* 19px */
+    line-height: 1.3;
+  }
+
+  .ll-stat__star {
+    color: var(--ll-star-gold, #d9a94e);
+  }
+
+  .ll-stat__label {
+    margin: 0;
+    font-size: 0.8125rem; /* 13px */
+    line-height: 1.5;
+    color: color-mix(in srgb, currentcolor 75%, transparent);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-stat {
+      padding: 18px 20px;
+    }
+
+    .ll-stat__figure {
+      font-size: 0.9375rem; /* 15px */
+    }
+
+    .ll-stat__label {
+      font-size: 0.75rem; /* 12px */
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Stat",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "stat",
+      "label": "Stat",
+      "default": "Three shops"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "label",
+      "label": "Sub-line",
+      "default": "Haworth · Skipton · Harrogate"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_star",
+      "label": "Show gold star",
+      "info": "For the rating plank, e.g. ★ 4.9 rated.",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

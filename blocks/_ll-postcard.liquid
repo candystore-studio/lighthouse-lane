@@ -1,0 +1,157 @@
+{% comment %}
+  Postcard — one review, taped to the board.
+
+  Private block, only offered inside the Review postcards section. Card
+  cream, gold stars, the quote in Katie's pen, sender initials beneath.
+  Tape and rotation come from the parent section by position, so shuffling
+  cards reshuffles the scatter naturally.
+
+  Content is merchant-curated: seeded from real Judge.me reviews, rotated
+  by hand. Zero app coupling — see the conversion plan (§5).
+{% endcomment %}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign rating = block_settings.rating | round
+-%}
+
+<figure class="ll-postcard" {{ block.shopify_attributes }}>
+  <span class="ll-postcard__tape" aria-hidden="true"></span>
+
+  <span
+    class="ll-postcard__stars"
+    role="img"
+    aria-label="Rated {{ rating }} out of 5 stars"
+  >
+    {%- for i in (1..5) -%}
+      {%- if i <= rating -%}★{%- else -%}☆{%- endif -%}
+    {%- endfor -%}
+  </span>
+
+  {%- if block_settings.quote != blank -%}
+    <blockquote class="ll-postcard__quote">{{ block_settings.quote }}</blockquote>
+  {%- endif -%}
+
+  <figcaption class="ll-postcard__sender">
+    {%- if block_settings.author != blank -%}
+      <span class="ll-postcard__author">{{ block_settings.author }}</span>
+    {%- endif -%}
+    {%- if block_settings.source != blank -%}
+      <span class="ll-postcard__source">{{ block_settings.source }}</span>
+    {%- endif -%}
+  </figcaption>
+</figure>
+
+{% stylesheet %}
+  .ll-postcard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 30px 24px 20px;
+    background: var(--ll-paper-card, #fdfaf0);
+    border: 1px solid var(--ll-stitch-color, #d6cbb1);
+  }
+
+  .ll-postcard__tape {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 70px;
+    height: 18px;
+    background: var(--ll-tape-fill, rgb(214 193 133 / 0.55));
+    border: 1px solid var(--ll-tape-border, rgb(160 140 80 / 0.25));
+    transform: translateX(-50%) rotate(var(--ll-postcard-tape-rotation, -2deg));
+  }
+
+  .ll-postcard__stars {
+    font-size: 0.875rem;
+    letter-spacing: 2px;
+    color: var(--ll-star, #b07c1b);
+  }
+
+  .ll-postcard__quote {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-style: var(--font-accent--style);
+    font-weight: 400;
+    font-size: 1.3125rem; /* 21px */
+    line-height: 1.35;
+  }
+
+  .ll-postcard__sender {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ll-postcard__author {
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 800;
+  }
+
+  .ll-postcard__source {
+    font-size: 0.75rem; /* 12px */
+    color: var(--ll-peat, #6e6454);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-postcard {
+      padding: 26px 20px 16px;
+      gap: 8px;
+    }
+
+    .ll-postcard__tape {
+      top: -9px;
+      width: 60px;
+      height: 16px;
+    }
+
+    .ll-postcard__stars {
+      font-size: 0.8125rem;
+    }
+
+    .ll-postcard__quote {
+      font-size: 1.25rem; /* 20px */
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Postcard",
+  "tag": null,
+  "settings": [
+    {
+      "type": "range",
+      "id": "rating",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "inline_richtext",
+      "id": "quote",
+      "label": "Quote",
+      "info": "Paste a real Judge.me review, quotation marks and all.",
+      "default": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.\""
+    },
+    {
+      "type": "text",
+      "id": "author",
+      "label": "Initials",
+      "info": "Initials only, e.g. S. M. — first names at most.",
+      "default": "S. M."
+    },
+    {
+      "type": "text",
+      "id": "source",
+      "label": "Source line",
+      "default": "Verified buyer · Judge.me"
+    }
+  ]
+}
+{% endschema %}

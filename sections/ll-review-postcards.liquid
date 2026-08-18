@@ -1,0 +1,349 @@
+{% comment %}
+  Review postcards — sent with love, taped to the board.
+
+  Aged-paper band of customer reviews as postcards: three up on desktop with
+  paging arrows, one up on mobile with dots. Cards are `_ll-postcard` blocks,
+  curated by hand from real Judge.me reviews (plan §5 — no widget skinning,
+  no app coupling; the summary line is a setting, updated manually).
+
+  The carousel is a scroll-snap track enhanced by <ll-review-postcards>
+  (assets/ll-review-postcards.js). Without JS it degrades to a scrollable
+  row; controls stay hidden until the element is defined and only show when
+  there is something to scroll.
+{% endcomment %}
+
+<script
+  src="{{ 'll-review-postcards.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{%- liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--page-width ll-postcards spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <ll-review-postcards
+    class="ll-postcards__wrapper"
+    data-label="{{ section.settings.heading_label | default: 'Customer reviews' | escape }}"
+  >
+    <div class="ll-postcards__header">
+      <div class="ll-postcards__summary">
+        <span class="ll-postcards__stars" aria-hidden="true">★★★★★</span>
+        {%- if section.settings.summary != blank -%}
+          <span class="ll-postcards__count">{{ section.settings.summary }}</span>
+        {%- endif -%}
+        {%- if section.settings.link != blank and section.settings.link_label != blank -%}
+          <a class="ll-postcards__link" href="{{ section.settings.link }}">{{ section.settings.link_label }}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="ll-postcards__arrows">
+        <button
+          type="button"
+          class="ll-postcards__arrow"
+          data-ref="prev"
+          aria-label="{{ 'accessibility.slideshow_previous' | t }}"
+        >‹</button>
+        <button
+          type="button"
+          class="ll-postcards__arrow"
+          data-ref="next"
+          aria-label="{{ 'accessibility.slideshow_next' | t }}"
+        >›</button>
+      </div>
+    </div>
+
+    <div class="ll-postcards__track" data-ref="track">
+      {% content_for 'blocks' %}
+    </div>
+
+    <div class="ll-postcards__dots" data-ref="dots"></div>
+  </ll-review-postcards>
+</div>
+
+{% stylesheet %}
+  .ll-postcards__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .ll-postcards__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .ll-postcards__summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ll-postcards__stars {
+    font-size: 1rem;
+    letter-spacing: 2px;
+    color: var(--ll-star, #b07c1b);
+  }
+
+  .ll-postcards__count {
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  .ll-postcards__link {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-foreground);
+    text-decoration: underline;
+    text-decoration-color: var(--ll-vermillion, #bf4a33);
+    text-underline-offset: 4px;
+  }
+
+  .ll-postcards__arrows {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ll-postcards__arrow {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: var(--ll-paper, #f8f3e6);
+    color: var(--ll-ink, #2e2a24);
+    border: 2px solid var(--ll-ink, #2e2a24);
+    border-radius: var(--ll-radius-tight, 3px);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .ll-postcards__arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  /* Controls stay out of the way until the custom element wakes up and
+     confirms there is actually something to scroll. */
+  ll-review-postcards:not(:defined) .ll-postcards__arrows,
+  ll-review-postcards[data-overflow='false'] .ll-postcards__arrows,
+  ll-review-postcards:not(:defined) .ll-postcards__dots,
+  ll-review-postcards[data-overflow='false'] .ll-postcards__dots {
+    display: none;
+  }
+
+  .ll-postcards__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 2 * var(--ll-postcards-gap, 28px)) / 3);
+    gap: var(--ll-postcards-gap, 28px);
+    align-items: start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* Room for the tape to poke above the cards and for the mid-card drop. */
+    padding-block: 14px 16px;
+  }
+
+  .ll-postcards__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ll-postcards__track > * {
+    scroll-snap-align: start;
+  }
+
+  .ll-postcards__track:focus-visible {
+    outline: var(--focus-outline-width, 2px) solid var(--ll-moor, #43573e);
+    outline-offset: var(--focus-outline-offset, 2px);
+  }
+
+  /* Postcard scatter — angles and tape repeat in threes. */
+  .ll-postcards__track > :nth-child(3n + 1) {
+    rotate: -1.4deg;
+    --ll-postcard-tape-rotation: -2deg;
+  }
+
+  .ll-postcards__track > :nth-child(3n + 2) {
+    rotate: 0.8deg;
+    margin-block-start: 14px;
+    --ll-postcard-tape-rotation: 1.5deg;
+  }
+
+  .ll-postcards__track > :nth-child(3n) {
+    rotate: -0.6deg;
+    --ll-postcard-tape-rotation: -1deg;
+  }
+
+  .ll-postcards__dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .ll-postcards__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--ll-border-strong, #c9bc9f);
+    cursor: pointer;
+  }
+
+  .ll-postcards__dot[data-active] {
+    background: var(--ll-moor, #43573e);
+  }
+
+  @media screen and (min-width: 750px) {
+    .ll-postcards__dots {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-postcards__wrapper {
+      gap: 18px;
+    }
+
+    .ll-postcards__arrows {
+      display: none;
+    }
+
+    .ll-postcards__track {
+      grid-auto-columns: 100%;
+    }
+
+    .ll-postcards__track > :nth-child(3n + 1) {
+      rotate: -1deg;
+    }
+
+    .ll-postcards__track > :nth-child(3n + 2) {
+      margin-block-start: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ll-postcards__track > * {
+      rotate: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Review postcards",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "_ll-postcard"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Curated from real Judge.me reviews — paste favourites in as postcards. The summary line is manual; update it now and then to match Judge.me."
+    },
+    {
+      "type": "text",
+      "id": "summary",
+      "label": "Summary line",
+      "default": "4.9 from 212 reviews"
+    },
+    {
+      "type": "text",
+      "id": "heading_label",
+      "label": "Screen reader label",
+      "default": "Customer reviews"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Read all link"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Read all"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "default": "#EFE7D2"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Review postcards",
+      "category": "Lighthouse Lane",
+      "blocks": {
+        "postcard_1": {
+          "type": "_ll-postcard",
+          "settings": {
+            "quote": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.\"",
+            "author": "S. M.",
+            "source": "Verified buyer · Judge.me"
+          }
+        },
+        "postcard_2": {
+          "type": "_ll-postcard",
+          "settings": {
+            "quote": "\"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.\"",
+            "author": "D. H.",
+            "source": "Verified buyer · Judge.me · Haworth shop visit"
+          }
+        },
+        "postcard_3": {
+          "type": "_ll-postcard",
+          "settings": {
+            "quote": "\"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.\"",
+            "author": "R. N.",
+            "source": "Verified buyer · Judge.me · Skipton shop visit"
+          }
+        }
+      },
+      "block_order": ["postcard_1", "postcard_2", "postcard_3"]
+    }
+  ]
+}
+{% endschema %}

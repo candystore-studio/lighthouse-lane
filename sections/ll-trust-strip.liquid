@@ -1,0 +1,144 @@
+{% comment %}
+  Trust strip — the painted sign board.
+
+  Full-bleed moor green board under the hero: four Bevan stats separated by
+  dashed cream seams, 2×2 on mobile. Repeatable `_ll-stat` blocks so Howard
+  can reword or reorder the planks without touching code.
+
+  The dividers are drawn with `currentcolor`, so recolouring the board from
+  the section settings keeps the seams in step.
+{% endcomment %}
+
+{%- liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--full-width ll-trust-strip spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="ll-trust-strip__board">
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .ll-trust-strip__board {
+    --ll-trust-seam: 1px dashed color-mix(in srgb, currentcolor 30%, transparent);
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  }
+
+  .ll-trust-strip__board > * + * {
+    border-inline-start: var(--ll-trust-seam);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-trust-strip__board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Two-up: seams between columns and between rows, none on the outside. */
+    .ll-trust-strip__board > * + * {
+      border-inline-start: none;
+    }
+
+    .ll-trust-strip__board > :nth-child(even) {
+      border-inline-start: var(--ll-trust-seam);
+    }
+
+    .ll-trust-strip__board > :not(:nth-last-child(-n+2)) {
+      border-block-end: var(--ll-trust-seam);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust strip",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "_ll-stat"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "default": "#43573E"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust strip",
+      "category": "Lighthouse Lane",
+      "blocks": {
+        "stat_shops": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "Three shops",
+            "label": "Haworth · Skipton · Harrogate"
+          }
+        },
+        "stat_years": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "11 years",
+            "label": "Trading since 2015"
+          }
+        },
+        "stat_family": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "Designed by us",
+            "label": "Katie &amp; Howard, family run"
+          }
+        },
+        "stat_rating": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "4.9 rated",
+            "label": "212 reviews on Judge.me",
+            "show_star": true
+          }
+        }
+      },
+      "block_order": ["stat_shops", "stat_years", "stat_family", "stat_rating"]
+    }
+  ]
+}
+{% endschema %}

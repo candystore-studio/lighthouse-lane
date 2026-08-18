@@ -1,0 +1,219 @@
+{% comment %}
+  Shop cards — luggage labels for the three shops.
+
+  Aged-paper band opened by a stitched seam. Heading row pairs the Bevan
+  title with a hand aside (the global `ll-hand-aside` block, rendered
+  statically so it is editable in the theme editor but cannot wander off).
+
+  Cards are `_ll-shop-card` blocks; the string-tag rotations and the middle
+  card's drop are dealt here by position so the cards themselves stay clean.
+  Reused on the About page with map imagery.
+{% endcomment %}
+
+{%- liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--page-width ll-shop-cards spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}{% if section.settings.show_seam %} ll-shop-cards--seam{% endif %}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="ll-shop-cards__inner">
+    {%- if section.settings.heading != blank -%}
+      <div class="ll-shop-cards__header">
+        <h2 class="ll-shop-cards__heading">{{ section.settings.heading }}</h2>
+        {% content_for 'block', type: 'll-hand-aside', id: 'aside' %}
+      </div>
+    {%- endif -%}
+
+    <div class="ll-shop-cards__grid">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .ll-shop-cards--seam {
+    border-block-start: var(--ll-stitch, 2px dashed #d6cbb1);
+  }
+
+  .ll-shop-cards__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .ll-shop-cards__header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .ll-shop-cards__heading {
+    margin: 0;
+  }
+
+  .ll-shop-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* String-tag scatter: tied on at slightly different angles, middle label
+     hanging a touch lower. Repeats per row of three. */
+  @media screen and (min-width: 750px) {
+    .ll-shop-cards__grid > :nth-child(3n + 1) {
+      rotate: -0.8deg;
+    }
+
+    .ll-shop-cards__grid > :nth-child(3n + 2) {
+      rotate: 0.6deg;
+      margin-block-start: 14px;
+    }
+
+    .ll-shop-cards__grid > :nth-child(3n) {
+      rotate: -0.4deg;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-shop-cards__inner {
+      gap: 16px;
+    }
+
+    .ll-shop-cards__header {
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ll-shop-cards__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .ll-shop-cards__grid > :nth-child(3n + 1) {
+      rotate: -0.5deg;
+    }
+
+    .ll-shop-cards__grid > :nth-child(3n + 2) {
+      rotate: 0.4deg;
+    }
+
+    .ll-shop-cards__grid > :nth-child(3n) {
+      rotate: -0.3deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ll-shop-cards__grid > * {
+      rotate: none;
+      margin-block-start: 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Shop cards",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "_ll-shop-card"
+    }
+  ],
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "Visit our shops"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "default": "#EFE7D2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_seam",
+      "label": "Stitched seam above",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop cards",
+      "category": "Lighthouse Lane",
+      "blocks": {
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "text": "— come say ey up, since 2015",
+            "font_size": "1.5rem",
+            "rotation": -1
+          }
+        },
+        "shop_haworth": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Haworth",
+            "details": "Address 1<br>Open daily 10am–5pm",
+            "mobile_style": "card"
+          }
+        },
+        "shop_skipton": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Skipton",
+            "details": "Address 2<br>Open daily 10am–5pm",
+            "mobile_style": "row"
+          }
+        },
+        "shop_harrogate": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Harrogate",
+            "details": "Address 3<br>Open daily 10am–5pm",
+            "mobile_style": "row"
+          }
+        }
+      },
+      "block_order": ["shop_haworth", "shop_skipton", "shop_harrogate"]
+    }
+  ]
+}
+{% endschema %}
