@@ -41,7 +41,7 @@
       <h3 class="ll-shop-card__name">{{ block_settings.name }}</h3>
     {%- endif -%}
     {%- if block_settings.details != blank -%}
-      <p class="ll-shop-card__details">{{ block_settings.details }}</p>
+      <div class="ll-shop-card__details rte">{{ block_settings.details }}</div>
     {%- endif -%}
     {%- if block_settings.link != blank -%}
       <a class="ll-shop-card__link" href="{{ block_settings.link }}">
@@ -117,10 +117,13 @@
   }
 
   .ll-shop-card__details {
-    margin: 0;
     font-size: 0.875rem; /* 14px */
     line-height: 1.5;
     color: var(--ll-peat, #6e6454);
+  }
+
+  .ll-shop-card__details p {
+    margin: 0;
   }
 
   .ll-shop-card__link {
@@ -218,10 +221,10 @@
       "default": "Haworth"
     },
     {
-      "type": "inline_richtext",
+      "type": "richtext",
       "id": "details",
       "label": "Address and hours",
-      "default": "Address<br>Open daily 10am–5pm"
+      "default": "<p>Address<br>Open daily 10am–5pm</p>"
     },
     {
       "type": "url",

@@ -611,7 +611,7 @@
           "type": "_ll-shop-card",
           "settings": {
             "name": "Haworth",
-            "details": "Address 1<br>Open daily 10am–5pm",
+            "details": "<p>Address 1<br>Open daily 10am–5pm</p>",
             "link_label": "Get directions",
             "mobile_style": "card"
           }
@@ -620,7 +620,7 @@
           "type": "_ll-shop-card",
           "settings": {
             "name": "Skipton",
-            "details": "Address 2<br>Open daily 10am–5pm",
+            "details": "<p>Address 2<br>Open daily 10am–5pm</p>",
             "link_label": "Get directions",
             "mobile_style": "row"
           }
@@ -629,7 +629,7 @@
           "type": "_ll-shop-card",
           "settings": {
             "name": "Harrogate",
-            "details": "Address 3<br>Open daily 10am–5pm",
+            "details": "<p>Address 3<br>Open daily 10am–5pm</p>",
             "link_label": "Get directions",
             "mobile_style": "row"
           }
