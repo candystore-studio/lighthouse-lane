@@ -9,6 +9,7 @@
  */
 {
   "accessibility": {
+    "breadcrumbs": "مسار التنقل",
     "account": "الحساب",
     "active_filters": "عوامل التصفية النشطة:",
     "cart": "سلة التسوق",

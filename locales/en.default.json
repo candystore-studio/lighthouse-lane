@@ -11,6 +11,7 @@
   "accessibility": {
     "account": "Account",
     "active_filters": "Active filters:",
+    "breadcrumbs": "Breadcrumb",
     "cart": "Basket",
     "cart_count": "Total items in basket",
     "close_dialog": "Close dialog",
@@ -207,10 +208,10 @@
     "inventory_in_stock": "In stock",
     "inventory_out_of_stock": "Out of stock",
     "item_count": {
-      "one": "{{ count }} item",
-      "other": "{{ count }} items"
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
     },
-    "item_count_cutoff": "More than {{ count }} items",
+    "item_count_cutoff": "More than {{ count }} products",
     "language": "Language",
     "localization_region_and_language": "Region and language",
     "no_products_found": "No products found.",

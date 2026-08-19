@@ -465,6 +465,71 @@ product-card [ref='productTitleLink'] p {
   color: var(--ll-peat);
 }
 
+/* Card ratings are a 13px line in the design; the block's own scale is tied
+   to the paragraph preset, which is 16px. */
+product-card .rating-wrapper {
+  --star-size: 0.8125rem; /* 13px */
+
+  font-size: 0.8125rem;
+}
+
+product-card .rating-wrapper .rating-count {
+  font-size: inherit;
+}
+
+/* Badges are hand-lettered stickers slapped on at an angle. Colour, corner
+   radius, face (accent = Caveat) and position are global settings; the
+   sizing, the tight ticket padding and the tilt are not expressible there. */
+.product-badges .product-badges__badge {
+  --badge-font-size: 1.0625rem; /* 17px — Caveat's floor is 15px */
+  --badge-rectangle-padding-block: 1px;
+  --badge-rectangle-padding-inline: 12px;
+
+  line-height: 1.35;
+}
+
+.product-badges .product-badges__badge.color-custom-badge-sale {
+  rotate: -3deg;
+}
+
+.product-badges .product-badges__badge.color-custom-badge-sold-out {
+  rotate: -2deg;
+}
+
+/* Sold out reads as a faded photograph with the ticket still crisp on top —
+   so the fade goes on the media, never on the badge. */
+product-card:has(.color-custom-badge-sold-out) .product-media-container {
+  opacity: 0.6;
+}
+
+product-card:has(.color-custom-badge-sold-out) :is([ref='productTitleLink'], product-price) {
+  color: var(--ll-peat);
+}
+
+@media screen and (max-width: 749px) {
+  .product-badges .product-badges__badge {
+    --badge-font-size: 0.9375rem; /* 15px */
+    --badge-rectangle-padding-inline: 10px;
+  }
+
+  /* Cards step down a size on mobile; the block settings only carry one. */
+  product-card :is([ref='productTitleLink'] .text-block, [ref='productTitleLink'] p, product-price) {
+    font-size: 0.875rem; /* 14px */
+  }
+
+  product-card .rating-wrapper {
+    --star-size: 0.6875rem; /* 11px */
+
+    font-size: 0.75rem; /* 12px */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-badges .product-badges__badge {
+    rotate: none;
+  }
+}
+
 /* Sale pricing reads as a corrected ticket: new price in vermillion, old
    price struck through in peat. A compare-at price present means on sale. */
 product-price :has(> .compare-at-price) .price-item__group.price {
@@ -605,5 +670,183 @@ product-price .compare-at-price {
   .shopify-section[id$='__ll_katies_art'] .media-block__media,
   .shopify-section[id$='__ll_instagram'] .image-block {
     rotate: none;
+  }
+}
+
+/* ==========================================================================
+   9. Collection — skin over the stock filter bar, grid and pagination
+   The header is its own section (`ll-collection-header`) and the cards are
+   dealt with in 7; what is left here is Horizon's own furniture: the
+   sort/count bar, the empty state and the pagination.
+
+   Search & Discovery is not installed, so the filter markup renders nothing
+   and `enable_filtering` is off in templates/collection.json. Selectors here
+   are written against the facet classes that carry filters too, so turning
+   filtering on later skins the sidebar and drawer without a second pass.
+
+   Note on specificity: Shopify injects the compiled section/block CSS through
+   `content_for_header`, which is after this file, so anything written here at
+   the same specificity as a theme rule loses. Every override below carries an
+   extra step (`.facets.facets--horizontal`, `.pagination .pagination__link`)
+   for that reason, not for tidiness. Keep it when editing.
+   ========================================================================== */
+
+/* -- The bar: stitched seams above and below, as in the design -------------
+   Desktop and mobile use different markup — `.facets--horizontal` is
+   display:none below 750px and `.facets-toggle` above it — so the seams are
+   drawn twice rather than on a shared ancestor, which would double up. */
+
+@media screen and (min-width: 750px) {
+  .collection-wrapper .facets-block-wrapper--horizontal {
+    border-block: var(--ll-stitch);
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .collection-wrapper .facets-toggle {
+    border-block: var(--ll-stitch);
+    height: auto;
+  }
+}
+
+/* Count is Katie's pen, not UI type. */
+.facets.facets--horizontal .products-count-wrapper {
+  font-family: var(--font-accent--family);
+  font-weight: var(--font-accent--weight);
+  font-size: 1.1875rem; /* 19px */
+  color: var(--ll-peat);
+}
+
+/* Sort reads as a cream ticket with the current choice on it. Horizon hides
+   the chosen option on desktop and shows it only in the mobile drawer; the
+   design shows it on both, and knowing the current sort without opening the
+   panel is worth the override. */
+.facets.facets--horizontal .facets__summary {
+  gap: 6px;
+  min-height: var(--ll-control-height);
+  padding-inline: 18px;
+  background-color: var(--ll-paper-card);
+  border: 1px solid var(--ll-border-strong);
+  border-radius: var(--ll-radius-tight);
+  color: var(--color-foreground);
+  font-weight: 700;
+  font-size: var(--font-size--sm);
+}
+
+.facets.facets--horizontal .facets__summary .facets__label {
+  margin-inline-end: 0;
+  font-weight: inherit;
+}
+
+.facets.facets--horizontal .facets__summary .facets__label::after {
+  content: ':';
+}
+
+@media screen and (min-width: 750px) {
+  .facets.facets--horizontal .facets__summary .facets__status {
+    /* stylelint-disable-next-line declaration-no-important */
+    display: inline !important;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+}
+
+/* Sort on mobile is the same ticket, one size down. */
+@media screen and (max-width: 749px) {
+  .facets-toggle .facets__summary.facets__summary {
+    min-height: 44px;
+    padding-inline: 14px;
+    background-color: var(--ll-paper-card);
+    border: 1px solid var(--ll-border-strong);
+    border-radius: var(--ll-radius-tight);
+    font-weight: 700;
+    font-size: 0.8125rem; /* 13px */
+  }
+
+  .facets-toggle .facets__summary.facets__summary .facets__status {
+    font-size: inherit;
+  }
+}
+
+/* Clear all is a plain underlined link in peat, not a button. */
+.facets .facets__clear-all-link {
+  color: var(--ll-peat);
+  font-weight: var(--font-subheading--weight);
+  text-decoration: underline;
+}
+
+/* -- Empty state -----------------------------------------------------------
+   Reached when a filter combination has no matches. Kept in the brand voice
+   rather than the stock centred stack. */
+
+.main-collection-grid .main-collection-grid__empty {
+  gap: 12px;
+}
+
+.main-collection-grid .main-collection-grid__empty-title {
+  margin: 0;
+}
+
+.main-collection-grid .main-collection-grid__empty p {
+  color: var(--ll-peat);
+}
+
+/* -- Pagination ------------------------------------------------------------
+   The design draws a "Show more" button under an infinite-ish grid; the build
+   uses numbered pages instead (crawlable, back-button-safe, no custom fetch
+   code to maintain), skinned as print blocks: square tiles, hairline rule,
+   current page inked in moor green. */
+
+.pagination.pagination {
+  --pagination-radius: 3;
+  --pagination-size: 44px;
+  --pagination-inset: 0px; /* stylelint-disable-line declaration-property-value-disallowed-list */
+
+  border-block-start: var(--ll-stitch);
+  margin-block-start: 0;
+  padding-block: 32px;
+}
+
+.pagination .pagination__list {
+  gap: 8px;
+}
+
+.pagination .pagination__link {
+  font-weight: var(--font-subheading--weight);
+  font-size: var(--font-size--sm);
+  border: var(--ll-hairline-border);
+  background-color: var(--ll-paper-card);
+}
+
+.pagination .pagination__link--gap {
+  border: none;
+  background: none;
+}
+
+.pagination .pagination__link:hover:not([aria-current='page'], .pagination__link--gap, .pagination__link--disabled) {
+  border-color: var(--ll-border-strong);
+}
+
+/* Horizon paints the current page and the hover target with pseudo-elements
+   — one per browser capability. Both are replaced with a flat fill so the
+   tile reads as a stamped block rather than a rounded chip. */
+.pagination .pagination__link[aria-current='page'] {
+  background-color: var(--ll-moor);
+  border-color: var(--ll-moor);
+  color: var(--ll-paper);
+}
+
+.pagination .pagination__link[aria-current='page']::before,
+.pagination .pagination__list::before {
+  content: none;
+}
+
+@media screen and (max-width: 749px) {
+  .pagination.pagination {
+    padding-block: 24px;
+  }
+
+  .pagination .pagination__list {
+    gap: 6px;
   }
 }

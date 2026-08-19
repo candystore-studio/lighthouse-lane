@@ -1,0 +1,270 @@
+{% comment %}
+  Collection header — breadcrumbs, sign-painted title, Katie's aside.
+
+  Replaces the stack of generic text blocks Horizon seeds into
+  templates/collection.json. Those blocks each carried their own Liquid
+  ({{ closest.collection.title }}) and their own type settings, so the brand
+  type scale lived in template JSON where a stray editor click could undo it.
+  Here the title and description are read from the collection directly and the
+  scale is fixed in the stylesheet; only the parts Howard should change are
+  settings.
+
+  Two static blocks: `ll-breadcrumbs` and `ll-hand-aside`. Static means they
+  are editable in the theme editor but cannot be dragged out or duplicated —
+  the aside is one-per-section by brand rule, and the trail belongs at the top.
+  The aside reads `collection.metafields.custom.hand_aside` and falls back to
+  its own text, so a collection with no note simply shows nothing rather than
+  the same line on every page.
+
+  The product count is a mobile-only line. Horizon renders its count inside
+  the filter bar, which is desktop-only markup (`.facets--horizontal` is
+  display:none below 750px, so the count cannot be revealed with CSS). The
+  design shows a count on both, so mobile gets one here. It is a static
+  figure — nothing on this page changes it, since sorting reorders rather
+  than filters, and filtering will re-render the count in the bar itself once
+  Search & Discovery is configured.
+{% endcomment %}
+
+{%- liquid
+  assign section_settings = section.settings
+
+  # The collection title is 36/26 in the design, which no Horizon preset hits —
+  # h1 is 42 and h2 is 30, and sizes under 48px are fixed rather than fluid. The
+  # three choices below are the brand scale, desktop and mobile together, so
+  # picking a size cannot leave mobile out of step.
+  case section_settings.title_size
+    when 'large'
+      assign title_size = '2.625rem'
+      assign title_size_mobile = '1.875rem'
+    when 'small'
+      assign title_size = '1.875rem'
+      assign title_size_mobile = '1.4375rem'
+    else
+      assign title_size = '2.25rem'
+      assign title_size_mobile = '1.625rem'
+  endcase
+
+  if section_settings.background_color != blank
+    render 'contrast-override', background_color: section_settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--page-width ll-collection-header spacing-style{% if section_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="
+    {% render 'spacing-style', settings: section_settings %}
+    --ll-collection-header-title-size: {{ title_size }};
+    --ll-collection-header-title-size-mobile: {{ title_size_mobile }};
+  "
+>
+  {%- if section_settings.show_breadcrumbs -%}
+    {% content_for 'block', type: 'll-breadcrumbs', id: 'breadcrumbs' %}
+  {%- endif -%}
+
+  {%- liquid
+    assign collection_title = collection.title
+    if collection_title == blank
+      assign collection_title = 'content.collection_placeholder' | t
+    endif
+  -%}
+  <div class="ll-collection-header__title-row">
+    <h1 class="ll-collection-header__title">{{ collection_title }}</h1>
+    {% content_for 'block', type: 'll-hand-aside', id: 'aside' %}
+  </div>
+
+  {%- if section_settings.show_description and collection.description != blank -%}
+    <div class="ll-collection-header__description rte">
+      {{ collection.description }}
+    </div>
+  {%- endif -%}
+
+  {%- if section_settings.show_count_on_mobile -%}
+    <p class="ll-collection-header__count">
+      {{- 'content.item_count' | t: count: collection.products_count -}}
+    </p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .ll-collection-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ll-collection-header__title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .ll-collection-header__title {
+    margin: 0;
+    font-size: var(--ll-collection-header-title-size, 2.25rem);
+  }
+
+  .ll-collection-header__description {
+    max-width: 35rem; /* 560px, per the design's measure */
+    color: var(--ll-peat);
+  }
+
+  .ll-collection-header__description > :first-child {
+    margin-block-start: 0;
+  }
+
+  .ll-collection-header__description > :last-child {
+    margin-block-end: 0;
+  }
+
+  /* Desktop count lives in the filter bar; this one only stands in below it. */
+  .ll-collection-header__count {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-collection-header {
+      gap: 8px;
+    }
+
+    .ll-collection-header__title {
+      font-size: var(--ll-collection-header-title-size-mobile, 1.625rem);
+    }
+
+    /* The aside drops under the title on mobile, as drawn. */
+    .ll-collection-header__title-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .ll-collection-header__count {
+      display: block;
+      margin: 4px 0 0;
+      font-family: var(--font-accent--family);
+      font-weight: var(--font-accent--weight);
+      font-size: 1.125rem; /* 18px */
+      line-height: 1.2;
+      color: var(--ll-peat);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection header",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count_on_mobile",
+      "label": "Show product count on mobile",
+      "info": "The desktop count is shown in the sorting bar below.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "t:settings.size",
+      "info": "Large 42/30px \u00b7 Medium 36/26px \u00b7 Small 30/23px (desktop/mobile)",
+      "options": [
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "t:content.colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection header",
+      "category": "Lighthouse Lane",
+      "blocks": {
+        "breadcrumbs": {
+          "type": "ll-breadcrumbs",
+          "static": true,
+          "settings": {
+            "home_label": "Home",
+            "structured_data": true,
+            "padding-block-end": 12
+          }
+        },
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "source": "collection_note",
+            "text": "",
+            "font_size": "1.5rem",
+            "rotation": -1
+          }
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,231 @@
+{% comment %}
+  Breadcrumbs — the trail back up the lane.
+
+  Horizon ships no breadcrumb, so this is a public block usable on any @theme
+  surface (collection header, product page, article, page). It reads the page
+  context rather than walking a linklist, so reorganising the menu cannot put
+  the trail out of step with the page it sits on.
+
+  Collections are two levels — Home / collection — because Shopify has no
+  collection hierarchy to read. Products pick up the collection they were
+  browsed from, but only when the URL carries one (/collections/x/products/y);
+  otherwise they are two levels as well.
+
+  The trail is built once into `crumbs` and read twice: the visible list and
+  the BreadcrumbList JSON-LD. Keep the two in step — Google treats structured
+  data that disagrees with the visible page as a quality problem, so the
+  structured data setting turns both off together, never one alone.
+{% endcomment %}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign home_label = block_settings.home_label | default: 'Home'
+
+  # Each crumb is 'title||url', crumbs joined with '~~'. The last crumb is the
+  # current page and carries no url, which is what marks it as current below.
+  assign crumbs = ''
+
+  case request.page_type
+    when 'collection'
+      assign crumbs = collection.title | append: '||'
+    when 'product'
+      # `collection` is only set when the product was reached through a
+      # collection URL, so this middle crumb comes and goes by design. Test the
+      # title rather than the object — an unset collection is nil, and nil is
+      # only loosely blank.
+      if collection.title != blank
+        assign crumbs = collection.title | append: '||' | append: collection.url | append: '~~'
+      endif
+      assign crumbs = crumbs | append: product.title | append: '||'
+    when 'article'
+      assign crumbs = blog.title | append: '||' | append: blog.url | append: '~~'
+      assign crumbs = crumbs | append: article.title | append: '||'
+    when 'blog'
+      assign crumbs = blog.title | append: '||'
+    when 'page'
+      assign crumbs = page.title | append: '||'
+    when 'search'
+      assign search_label = 'content.search' | t
+      assign crumbs = search_label | append: '||'
+  endcase
+
+  assign crumb_list = crumbs | split: '~~'
+-%}
+
+{%- if crumb_list.size > 0 -%}
+  <nav
+    class="ll-breadcrumbs spacing-style"
+    style="
+      {% render 'spacing-style', settings: block_settings %}
+      --ll-breadcrumbs-align: {{ block_settings.alignment }};
+    "
+    aria-label="{{ 'accessibility.breadcrumbs' | t }}"
+    {{ block.shopify_attributes }}
+  >
+    <ol class="ll-breadcrumbs__list" role="list">
+      <li class="ll-breadcrumbs__item">
+        <a class="ll-breadcrumbs__link" href="{{ routes.root_url }}">{{ home_label }}</a>
+      </li>
+
+      {%- for crumb in crumb_list -%}
+        {%- liquid
+          assign crumb_parts = crumb | split: '||'
+          assign crumb_title = crumb_parts[0]
+          assign crumb_url = crumb_parts[1]
+        -%}
+        <li class="ll-breadcrumbs__item">
+          {%- if crumb_url != blank -%}
+            <a class="ll-breadcrumbs__link" href="{{ crumb_url }}">{{ crumb_title }}</a>
+          {%- else -%}
+            <span class="ll-breadcrumbs__current" aria-current="page">{{ crumb_title }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ol>
+  </nav>
+
+  {%- if block_settings.structured_data -%}
+    {%- capture breadcrumb_items -%}
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": {{ home_label | json }},
+        "item": {{ shop.url | append: routes.root_url | json }}
+      }
+      {%- for crumb in crumb_list -%}
+        {%- liquid
+          assign crumb_parts = crumb | split: '||'
+          assign crumb_title = crumb_parts[0]
+          assign crumb_url = crumb_parts[1]
+          assign position = forloop.index | plus: 1
+        -%}
+        ,{
+          "@type": "ListItem",
+          "position": {{ position }},
+          "name": {{ crumb_title | json }}
+          {%- if crumb_url != blank -%}
+            ,"item": {{ shop.url | append: crumb_url | json }}
+          {%- endif -%}
+        }
+      {%- endfor -%}
+    {%- endcapture -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{{ breadcrumb_items }}]
+      }
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .ll-breadcrumbs {
+    font-size: var(--font-size--sm);
+    line-height: 1.4;
+    text-align: var(--ll-breadcrumbs-align, left);
+  }
+
+  .ll-breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: var(--ll-breadcrumbs-align, left);
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ll-breadcrumbs__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Signwritten slash, not an icon. The empty alt text keeps it out of the
+     accessibility tree so the trail reads as a plain list. */
+  .ll-breadcrumbs__item + .ll-breadcrumbs__item::before {
+    content: '/';
+    content: '/' / ''; /* stylelint-disable-line declaration-block-no-duplicate-properties */
+    color: var(--ll-faded);
+  }
+
+  .ll-breadcrumbs__link {
+    color: var(--ll-peat);
+    text-decoration: none;
+  }
+
+  .ll-breadcrumbs__current {
+    font-weight: var(--font-subheading--weight);
+    color: var(--color-foreground);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-breadcrumbs {
+      font-size: 0.8125rem; /* 13px */
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "Home label",
+      "default": "Home"
+    },
+    {
+      "type": "checkbox",
+      "id": "structured_data",
+      "label": "Add breadcrumb structured data",
+      "info": "Adds BreadcrumbList schema so search engines can show the trail in results.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Breadcrumbs",
+      "category": "Lighthouse Lane"
+    }
+  ]
+}
+{% endschema %}

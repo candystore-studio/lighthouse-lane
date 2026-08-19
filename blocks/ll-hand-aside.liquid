@@ -8,11 +8,35 @@
 
   Brand rules it enforces by construction: Caveat 700, never below 15px,
   rotation never past 1.5 degrees, one aside per section.
+
+  The source setting lets the same block read a metafield instead of its own
+  text, so per-collection and per-product asides stay merchant-editable from
+  the resource rather than the theme editor. The text setting is the fallback
+  whenever the metafield is empty, which keeps templated placements (the
+  collection header) from rendering a bald heading on resources Howard has
+  not annotated yet.
 {% endcomment %}
 
 {%- liquid
   assign block_settings = block.settings
   assign text = block_settings.text
+
+  case block_settings.source
+    when 'collection_note'
+      assign source_text = closest.collection.metafields.custom.hand_aside.value
+      if source_text == blank
+        assign source_text = collection.metafields.custom.hand_aside.value
+      endif
+    when 'product_note'
+      assign source_text = closest.product.metafields.custom.price_aside.value
+      if source_text == blank
+        assign source_text = product.metafields.custom.price_aside.value
+      endif
+  endcase
+
+  if source_text != blank
+    assign text = source_text
+  endif
 -%}
 
 {%- if text != blank -%}
@@ -65,6 +89,27 @@
   "name": "Hand aside",
   "tag": null,
   "settings": [
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Text source",
+      "info": "Metafield sources fall back to the text below when the metafield is empty.",
+      "options": [
+        {
+          "value": "text",
+          "label": "Text below"
+        },
+        {
+          "value": "collection_note",
+          "label": "Collection note (custom.hand_aside)"
+        },
+        {
+          "value": "product_note",
+          "label": "Product price note (custom.price_aside)"
+        }
+      ],
+      "default": "text"
+    },
     {
       "type": "inline_richtext",
       "id": "text",
