@@ -44,7 +44,7 @@
       },
       "settings": {
         "show_breadcrumbs": true,
-        "show_description": true,
+        "show_description": false,
         "show_count_on_mobile": true,
         "title_size": "medium",
         "background_color": "",
