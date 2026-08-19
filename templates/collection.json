@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "collection_header": {
       "type": "ll-collection-header",
@@ -20,22 +21,25 @@
             "alignment": "left",
             "padding-block-start": 0,
             "padding-block-end": 12
-          }
+          },
+          "blocks": {}
         },
         "aside": {
           "type": "ll-hand-aside",
           "static": true,
           "settings": {
             "source": "collection_note",
-            "text": "",
+            "text": "Hand aside example",
             "font_size": "1.5rem",
+            "text_color": "",
             "alignment": "left",
             "rotation": -1,
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
-          }
+          },
+          "blocks": {}
         }
       },
       "settings": {
@@ -43,6 +47,7 @@
         "show_description": true,
         "show_count_on_mobile": true,
         "title_size": "medium",
+        "background_color": "",
         "padding-block-start": 24,
         "padding-block-end": 8
       }
@@ -62,6 +67,8 @@
             "show_filter_label": false,
             "enable_sorting": true,
             "enable_grid_density": false,
+            "background_color": "",
+            "text_color": "",
             "padding-block-start": 14,
             "padding-block-end": 14,
             "padding-inline-start": 0,
@@ -76,9 +83,11 @@
           "static": true,
           "settings": {
             "product_card_gap": 8,
+            "background_color": "",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
+            "border_color": "",
             "border_radius": 0,
             "padding-block-start": 0,
             "padding-block-end": 0,
@@ -93,7 +102,7 @@
                 "border": "solid",
                 "border_width": 1,
                 "border_opacity": 100,
-                "border_color": "#D6CBB1",
+                "border_color": "#d6cbb1",
                 "border_radius": 3,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -116,6 +125,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -131,6 +141,7 @@
               "settings": {
                 "stars_style": "shaded",
                 "show_number": true,
+                "text_color": "",
                 "type_preset": "paragraph",
                 "width": "100%",
                 "alignment": "left"
@@ -151,6 +162,7 @@
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
+                "text_color": "",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
