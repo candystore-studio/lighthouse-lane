@@ -7,6 +7,13 @@
 
   The dividers are drawn with `currentcolor`, so recolouring the board from
   the section settings keeps the seams in step.
+
+  Width: the green is painted on the full-bleed `.section-background` sibling,
+  so the board itself sits in the page column (`section--page-width`) and the
+  planks line up with every other band on the site. The outer planks drop
+  their inline padding so the first figure starts on the page gutter rather
+  than 32px inside it — the plank padding is a gutter between planks, not a
+  page margin.
 {% endcomment %}
 
 {%- liquid
@@ -19,7 +26,7 @@
   class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 <div
-  class="section section--full-width ll-trust-strip spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  class="section section--page-width ll-trust-strip spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
   style="{% render 'spacing-style', settings: section.settings %}"
 >
   <div class="ll-trust-strip__board">
@@ -39,6 +46,17 @@
     border-inline-start: var(--ll-trust-seam);
   }
 
+  /* Outer planks sit flush with the page column; the 32px is a gutter between
+     planks, and doubling it up with the page margin pushes the first figure
+     out of line with the headings above and below. */
+  .ll-trust-strip__board > :first-child {
+    padding-inline-start: 0;
+  }
+
+  .ll-trust-strip__board > :last-child {
+    padding-inline-end: 0;
+  }
+
   @media screen and (max-width: 749px) {
     .ll-trust-strip__board {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -55,6 +73,15 @@
 
     .ll-trust-strip__board > :not(:nth-last-child(-n+2)) {
       border-block-end: var(--ll-trust-seam);
+    }
+
+    /* Two-up: the left column is flush left, the right column flush right. */
+    .ll-trust-strip__board > :nth-child(odd) {
+      padding-inline-start: 0;
+    }
+
+    .ll-trust-strip__board > :nth-child(even) {
+      padding-inline-end: 0;
     }
   }
 {% endstylesheet %}

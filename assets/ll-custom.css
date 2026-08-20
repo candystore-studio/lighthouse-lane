@@ -691,6 +691,28 @@ product-price .compare-at-price {
    for that reason, not for tidiness. Keep it when editing.
    ========================================================================== */
 
+/* -- Column alignment ------------------------------------------------------
+   Horizon builds collection and search pages on `.grid`, not on `.section`.
+   The two do not agree: `.section` gutters are `--page-margin` (40px) and cap
+   at the page width, while `.grid` uses `--margin-4xl` (32px) gutters until
+   1400px it switches to the page width.
+
+   `.collection-wrapper` is already inside a `.section` grid, so it measures
+   the page column exactly — 1360px, or the viewport less two 40px margins.
+   Above 1400px its own edge columns collapse to nothing and the grid lines up
+   with the rest of the page. Below 1400px they take 32px each, insetting the
+   product grid, filter bar and pagination by a further 32px per side: on a
+   laptop the collection page runs narrower than the header, footer and every
+   homepage band. Zeroing those edge columns puts the collection page back on
+   the site measure at every width. Full-width children span column-0 to
+   column-13 and are unaffected. */
+
+@media screen and (min-width: 750px) and (max-width: 1399px) {
+  .collection-wrapper.grid {
+    grid-template-columns: 0 repeat(var(--centered-column-number), minmax(0, 1fr)) 0;
+  }
+}
+
 /* -- The bar: stitched seams above and below, as in the design -------------
    Desktop and mobile use different markup — `.facets--horizontal` is
    display:none below 750px and `.facets-toggle` above it — so the seams are

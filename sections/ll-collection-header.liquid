@@ -60,36 +60,47 @@
     --ll-collection-header-title-size-mobile: {{ title_size_mobile }};
   "
 >
-  {%- if section_settings.show_breadcrumbs -%}
-    {% content_for 'block', type: 'll-breadcrumbs', id: 'breadcrumbs' %}
-  {%- endif -%}
+  {%- comment -%}
+    Everything sits in an inner wrapper. `.section` is itself a grid — margin
+    column, page column, margin column — and its children are placed in the
+    middle column, which is what keeps every band on the site to the same
+    1360px measure. Styling the section element's own display (flex, say)
+    silently throws that grid away and the section goes full bleed, so the
+    layout for this section lives one level down. Same shape as
+    `.ll-shop-cards__inner`.
+  {%- endcomment -%}
+  <div class="ll-collection-header__inner">
+    {%- if section_settings.show_breadcrumbs -%}
+      {% content_for 'block', type: 'll-breadcrumbs', id: 'breadcrumbs' %}
+    {%- endif -%}
 
-  {%- liquid
-    assign collection_title = collection.title
-    if collection_title == blank
-      assign collection_title = 'content.collection_placeholder' | t
-    endif
-  -%}
-  <div class="ll-collection-header__title-row">
-    <h1 class="ll-collection-header__title">{{ collection_title }}</h1>
-    {% content_for 'block', type: 'll-hand-aside', id: 'aside' %}
-  </div>
-
-  {%- if section_settings.show_description and collection.description != blank -%}
-    <div class="ll-collection-header__description rte">
-      {{ collection.description }}
+    {%- liquid
+      assign collection_title = collection.title
+      if collection_title == blank
+        assign collection_title = 'content.collection_placeholder' | t
+      endif
+    -%}
+    <div class="ll-collection-header__title-row">
+      <h1 class="ll-collection-header__title">{{ collection_title }}</h1>
+      {% content_for 'block', type: 'll-hand-aside', id: 'aside' %}
     </div>
-  {%- endif -%}
 
-  {%- if section_settings.show_count_on_mobile -%}
-    <p class="ll-collection-header__count">
-      {{- 'content.item_count' | t: count: collection.products_count -}}
-    </p>
-  {%- endif -%}
+    {%- if section_settings.show_description and collection.description != blank -%}
+      <div class="ll-collection-header__description rte">
+        {{ collection.description }}
+      </div>
+    {%- endif -%}
+
+    {%- if section_settings.show_count_on_mobile -%}
+      <p class="ll-collection-header__count">
+        {{- 'content.item_count' | t: count: collection.products_count -}}
+      </p>
+    {%- endif -%}
+  </div>
 </div>
 
 {% stylesheet %}
-  .ll-collection-header {
+  .ll-collection-header__inner {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -126,7 +137,7 @@
   }
 
   @media screen and (max-width: 749px) {
-    .ll-collection-header {
+    .ll-collection-header__inner {
       gap: 8px;
     }
 
