@@ -44,7 +44,9 @@
       },
       "settings": {
         "show_breadcrumbs": true,
-        "show_description": true,
+        "show_intro": true,
+        "intro_fallback": true,
+        "intro_words": 28,
         "show_count_on_mobile": true,
         "title_size": "medium",
         "background_color": "",
@@ -195,10 +197,26 @@
         "padding-block-start": 32,
         "padding-block-end": 40
       }
+    },
+    "collection_description": {
+      "type": "ll-collection-description",
+      "settings": {
+        "heading": "More about this collection",
+        "show_top_rule": true,
+        "normalise_alignment": true,
+        "collapse": true,
+        "collapsed_lines": 6,
+        "more_label": "Read more",
+        "less_label": "Read less",
+        "background_color": "",
+        "padding-block-start": 8,
+        "padding-block-end": 48
+      }
     }
   },
   "order": [
     "collection_header",
-    "main"
+    "main",
+    "collection_description"
   ]
 }

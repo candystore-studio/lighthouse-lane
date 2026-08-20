@@ -5,9 +5,12 @@
   templates/collection.json. Those blocks each carried their own Liquid
   ({{ closest.collection.title }}) and their own type settings, so the brand
   type scale lived in template JSON where a stray editor click could undo it.
-  Here the title and description are read from the collection directly and the
+  Here the title and intro are read from the collection directly and the
   scale is fixed in the stylesheet; only the parts Howard should change are
   settings.
+
+  The intro is a teaser, not the description. The full SEO copy renders in
+  `ll-collection-description` below the product grid — see that file for why.
 
   Two static blocks: `ll-breadcrumbs` and `ll-hand-aside`. Static means they
   are editable in the theme editor but cannot be dragged out or duplicated —
@@ -85,10 +88,34 @@
       {% content_for 'block', type: 'll-hand-aside', id: 'aside' %}
     </div>
 
-    {%- if section_settings.show_description and collection.description != blank -%}
-      <div class="ll-collection-header__description rte">
-        {{ collection.description }}
-      </div>
+    {%- comment -%}
+      The design draws one line here — 16px peat, 560px measure — and the
+      descriptions Howard writes are several hundred words for search. Printing
+      the field raw made the intro the whole first screen on mobile, so the
+      full copy moved to `ll-collection-description` below the grid and this
+      is a teaser.
+
+      Two sources, in order. `collection.metafields.custom.intro` is a
+      purpose-written line and is what should end up on every collection: it
+      reads as a sentence and does not repeat the opening of the body copy
+      further down the page. Where that is empty the description is cut to
+      `intro_words` as a stand-in, stripped of its markup so the bold lead-in
+      and any centring from the rich text editor do not come with it — one
+      plain line, as drawn.
+    {%- endcomment -%}
+    {%- liquid
+      assign intro = ''
+
+      if section_settings.show_intro
+        assign intro = collection.metafields.custom.intro.value
+
+        if intro == blank and section_settings.intro_fallback
+          assign intro = collection.description | strip_html | strip_newlines | truncatewords: section_settings.intro_words
+        endif
+      endif
+    -%}
+    {%- if intro != blank -%}
+      <p class="ll-collection-header__intro">{{ intro }}</p>
     {%- endif -%}
 
     {%- if section_settings.show_count_on_mobile -%}
@@ -118,17 +145,11 @@
     font-size: var(--ll-collection-header-title-size, 2.25rem);
   }
 
-  .ll-collection-header__description {
+  .ll-collection-header__intro {
+    margin: 0;
     max-width: 35rem; /* 560px, per the design's measure */
+    line-height: 1.6;
     color: var(--ll-peat);
-  }
-
-  .ll-collection-header__description > :first-child {
-    margin-block-start: 0;
-  }
-
-  .ll-collection-header__description > :last-child {
-    margin-block-end: 0;
   }
 
   /* Desktop count lives in the filter bar; this one only stands in below it. */
@@ -179,9 +200,27 @@
     },
     {
       "type": "checkbox",
-      "id": "show_description",
-      "label": "Show collection description",
+      "id": "show_intro",
+      "label": "Show intro line",
+      "info": "Uses the collection's Intro metafield (custom.intro). The full description shows below the products.",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "intro_fallback",
+      "label": "Fall back to the description",
+      "info": "When no intro is written, show the opening of the collection description instead.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "intro_words",
+      "label": "Fallback length",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "wd",
+      "default": 28
     },
     {
       "type": "checkbox",
