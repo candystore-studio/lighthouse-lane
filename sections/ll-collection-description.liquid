@@ -1,29 +1,44 @@
 {% comment %}
-  Collection description — the long SEO copy, below the grid.
+  Collection description — the pinned note under the grid.
 
-  Howard writes several hundred words per collection for search. Sat above the
+  Howard writes several hundred words per collection for search. Above the
   products that copy is the whole first screen on mobile and the grid never
-  gets seen; sat below them it does the same job for search and stops
-  competing with the thing people came for. The header keeps a one- or
-  two-line intro (see `ll-collection-header`), this section carries the body.
+  gets seen, so the page splits it: `ll-collection-header` carries a one-line
+  intro with a "Read more ↓" jump, and the body lands here on aged paper
+  below the grid.
 
   The text is `collection.description` verbatim — same field, same admin box,
   nothing for Howard to keep in two places. It is in the markup in full on
-  every render; `<ll-expandable-text>` only limits how much is painted, so the
-  clamp costs nothing in search and reads the same to a crawler as to a
-  reader who never presses the button.
+  every render, so a crawler reads the same words as someone who never opens
+  the disclosure.
+
+  Desktop and mobile are one DOM, reshaped in CSS rather than duplicated:
+
+    desktop — the whole block is the paper card (760px, hairline, hard
+              shadow), heading row inside it above a dashed seam, full copy
+    mobile  — heading row steps outside and above the card, the card holds
+              the lead paragraph, and the rest sits behind the Read more row
+
+  So `__inner` wears the card chrome on desktop and `__card` wears it on
+  mobile. Neither is decoration for its own sake — the disclosure is what
+  keeps the footer reachable on a phone.
+
+  The collapse is CSS, not measurement: `mobile_lead` blocks stay visible and
+  the siblings after them are `display: none` until `data-expanded` flips.
+  `<ll-expandable-text>` only carries that flag and hides the toggle when
+  there is nothing behind it. Nothing is inserted, moved or removed, which is
+  why arbitrary rich text survives it.
 
   `normalise_alignment` exists because Shopify's rich text editor writes
-  `text-align` as an inline style on each paragraph, and a lot of the current
+  `text-align` as an inline style per paragraph, and a lot of the current
   descriptions are centred from when they sat under a centred heading.
-  Centred long prose is hard to read — every line starts in a different place
-  — and inline styles beat any stylesheet, so the override has to be
-  `!important` to reach them. It stays a setting rather than a hard rule so a
-  short, deliberately centred description can keep its alignment.
+  Centred long prose is hard to read and inline styles beat any stylesheet,
+  so the override has to be `!important` to reach them.
 
   Nothing renders when the description is empty, so the section can sit in
   `templates/collection.json` for every collection without leaving a gap on
-  the ones Howard has not written yet.
+  the ones Howard has not written yet. One instance per template: the anchor
+  id is fixed so the header's jump link has something stable to aim at.
 {% endcomment %}
 
 <script
@@ -36,6 +51,11 @@
   assign section_settings = section.settings
   assign description = collection.description
 
+  # `[collection]` is spelled out in the setting's help text. Liquid in a
+  # theme setting is not evaluated, so a token is the only way to let Howard
+  # write one heading that reads correctly on every collection.
+  assign heading = section_settings.heading | replace: '[collection]', collection.title
+
   if section_settings.background_color != blank
     render 'contrast-override', background_color: section_settings.background_color, section_id: section.id
   endif
@@ -43,39 +63,50 @@
 
 {%- if description != blank -%}
   <div
-    class="section-background{% if section_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+    class="section-background ll-collection-description__band{% if section_settings.show_top_rule %} ll-collection-description__band--ruled{% endif %}{% if section_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
   ></div>
   <div
     class="section section--page-width ll-collection-description spacing-style{% if section_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+    id="collection-description"
     style="{% render 'spacing-style', settings: section_settings %}"
   >
-    <div
-      class="ll-collection-description__inner{% if section_settings.show_top_rule %} ll-collection-description__inner--ruled{% endif %}"
+    <ll-expandable-text
+      class="ll-collection-description__inner"
+      data-lead="{{ section_settings.mobile_lead }}"
     >
-      {%- if section_settings.heading != blank -%}
-        <h2 class="ll-collection-description__heading">{{ section_settings.heading }}</h2>
+      {%- if heading != blank or section_settings.show_aside -%}
+        <div class="ll-collection-description__header">
+          {%- if heading != blank -%}
+            <h2 class="ll-collection-description__heading">{{ heading }}</h2>
+          {%- endif -%}
+
+          {%- comment -%}
+            Katie's pen, same block as everywhere else. Its own text rather
+            than `custom.hand_aside` — that metafield is spoken for by the
+            aside beside the collection title, and the design gives this one a
+            different line ("a bit of background").
+          {%- endcomment -%}
+          {%- if section_settings.show_aside -%}
+            {% content_for 'block', type: 'll-hand-aside', id: 'aside' %}
+          {%- endif -%}
+        </div>
       {%- endif -%}
 
-      {%- if section_settings.collapse -%}
-        <ll-expandable-text
-          class="ll-collection-description__disclosure"
-          style="--ll-expandable-lines: {{ section_settings.collapsed_lines }};"
+      <div class="ll-collection-description__card">
+        <div
+          class="ll-collection-description__body rte{% if section_settings.normalise_alignment %} ll-collection-description__body--start{% endif %}"
+          id="collection-description-body"
         >
-          <div
-            class="ll-collection-description__body rte{% if section_settings.normalise_alignment %} ll-collection-description__body--start{% endif %}"
-            data-ll-expandable-body
-            id="ll-collection-description-{{ section.id }}"
-          >
-            {{ description }}
-          </div>
+          {{ description }}
+        </div>
 
+        {%- if section_settings.collapse_on_mobile -%}
           <button
             class="ll-collection-description__toggle"
             type="button"
             aria-expanded="false"
-            aria-controls="ll-collection-description-{{ section.id }}"
+            aria-controls="collection-description-body"
             data-ll-expandable-toggle
-            hidden
           >
             <span class="ll-collection-description__toggle-label" data-when="collapsed">
               {{- section_settings.more_label | escape -}}
@@ -85,33 +116,34 @@
             </span>
             {%- comment -%}
               Decorative: the label already says which way this goes, so the
-              caret is hidden from assistive tech rather than read out twice.
+              chevron is kept out of the accessibility tree rather than read
+              out twice.
             {%- endcomment -%}
-            <span class="ll-collection-description__toggle-caret" aria-hidden="true"></span>
+            <span class="ll-collection-description__toggle-caret" aria-hidden="true">
+              <span data-when="collapsed">&rsaquo;</span>
+              <span data-when="expanded">&#8964;</span>
+            </span>
           </button>
-        </ll-expandable-text>
 
-        {%- comment -%}
-          The clamp is applied in CSS so there is no flash of the full block
-          on load, which means a reader with JS off would be left with cut
-          copy and no toggle. Drop the clamp for them.
-        {%- endcomment -%}
-        <noscript>
-          <style>
-            .ll-collection-description__body {
-              max-height: none;
-              mask-image: none;
-            }
-          </style>
-        </noscript>
-      {%- else -%}
-        <div
-          class="ll-collection-description__body ll-collection-description__body--open rte{% if section_settings.normalise_alignment %} ll-collection-description__body--start{% endif %}"
-        >
-          {{ description }}
-        </div>
-      {%- endif -%}
-    </div>
+          {%- comment -%}
+            The collapse is applied in CSS so there is no flash of the full
+            block on load, which means a reader with JS off would be left with
+            a lead paragraph and a dead button. Open it up for them.
+          {%- endcomment -%}
+          <noscript>
+            <style>
+              .ll-collection-description__body > * {
+                display: revert !important;
+              }
+
+              .ll-collection-description__toggle {
+                display: none !important;
+              }
+            </style>
+          </noscript>
+        {%- endif -%}
+      </div>
+    </ll-expandable-text>
   </div>
 {%- elsif request.design_mode -%}
   <div class="section section--page-width ll-collection-description">
@@ -123,35 +155,73 @@
 {%- endif -%}
 
 {% stylesheet %}
-  .ll-collection-description__inner {
-    /* 40rem ≈ 66 characters at the brand body size — the readable measure for
-       running prose. The header intro is held to 35rem to match the design;
-       this is a longer read and takes the wider column. */
-    max-width: 40rem;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  .ll-collection-description__band--ruled {
+    border-block-start: var(--ll-stitch);
   }
 
-  .ll-collection-description__inner--ruled {
-    padding-block-start: 28px;
-    border-block-start: var(--ll-stitch);
+  /* The header's "Read more ↓" lands here, so clear the sticky header. */
+  .ll-collection-description {
+    scroll-margin-block-start: calc(var(--header-group-height, 0px) + 16px);
+  }
+
+  .ll-collection-description__inner {
+    display: flex;
+    flex-direction: column;
+
+    /* Desktop: the wrapper is the card. Mobile swaps this onto `__card` so the
+       heading can step outside it — see the media query. */
+    max-width: 47.5rem; /* 760px */
+    margin-inline: auto;
+    padding: 36px 40px 40px;
+    background-color: var(--ll-paper-card);
+    border: 1px solid var(--ll-border-strong);
+    border-radius: var(--ll-radius-tight);
+    /* Lighter than --ll-shadow-offset: this card is a note on the page, not a
+       product tile lifted off it. */
+    box-shadow: 2px 3px 0 rgb(46 42 36 / 0.1);
+  }
+
+  .ll-collection-description__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 14px;
+    padding-block-end: 14px;
+    border-block-end: var(--ll-stitch);
   }
 
   .ll-collection-description__heading {
     margin: 0;
-    font-size: 1.375rem; /* 22px — a footnote to the grid, not a second title */
+    font-size: 1.5rem; /* 24px — a footnote to the grid, not a second title */
+  }
+
+  .ll-collection-description__card {
+    display: flex;
+    flex-direction: column;
   }
 
   .ll-collection-description__body {
+    margin-block-start: 16px;
     color: var(--ll-peat);
-    max-height: calc(var(--ll-expandable-lines, 6) * 1.6em);
-    max-height: calc(var(--ll-expandable-lines, 6) * 1lh);
-    overflow: hidden;
+    font-size: 1rem;
+    line-height: 1.75;
+    text-wrap: pretty;
   }
 
-  .ll-collection-description__body--open {
-    max-height: none;
+  /* `.rte` sets its own heading rhythm off the body scale; this copy is set to
+     the design's spacing instead, and the subheads are Bevan like every other
+     heading on the site. */
+  .ll-collection-description__body > * {
+    margin-block: 0 16px;
+  }
+
+  .ll-collection-description__body :is(h2, h3, h4, h5, h6) {
+    margin-block: 24px 16px;
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight);
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.35;
+    color: var(--ll-ink);
   }
 
   .ll-collection-description__body > :first-child {
@@ -169,67 +239,10 @@
     text-align: start !important;
   }
 
-  /* Fade the cut edge so the clamp reads as "there is more" rather than a
-     line that happens to end. Masked rather than a gradient overlay so it
-     works over any section background Howard picks. */
-  ll-expandable-text[data-overflowing='true']:not([data-expanded='true']) .ll-collection-description__body {
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5em), transparent);
-  }
-
-  ll-expandable-text[data-expanded='true'] .ll-collection-description__body {
-    max-height: none;
-  }
-
+  /* Desktop shows the copy whole; the disclosure is a mobile answer to a
+     mobile problem, so the control does not exist above 750px. */
   .ll-collection-description__toggle {
-    align-self: start;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-block-start: 12px;
-    padding: 0;
-    background: none;
-    border: 0;
-    font-family: var(--font-body--family);
-    font-weight: 800;
-    font-size: 0.9375rem; /* 15px */
-    color: var(--ll-moor);
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .ll-collection-description__toggle:hover {
-    color: var(--ll-moor-hover);
-    text-decoration: underline wavy var(--ll-vermillion);
-  }
-
-  .ll-collection-description__toggle-caret {
-    width: 0;
-    height: 0;
-    border-inline: 4px solid transparent;
-    border-block-start: 5px solid currentcolor;
-    transition: transform 0.15s ease;
-  }
-
-  /* Only one label is true at a time; the other is removed from the
-     accessibility tree with the same rule that hides it visually. */
-  .ll-collection-description__toggle [data-when='expanded'],
-  ll-expandable-text[data-expanded='true'] .ll-collection-description__toggle [data-when='collapsed'] {
     display: none;
-  }
-
-  ll-expandable-text[data-expanded='true'] .ll-collection-description__toggle [data-when='expanded'] {
-    display: inline;
-  }
-
-  ll-expandable-text[data-expanded='true'] .ll-collection-description__toggle-caret {
-    transform: rotate(180deg);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .ll-collection-description__toggle-caret {
-      transition: none;
-    }
   }
 
   .ll-collection-description__placeholder {
@@ -240,12 +253,104 @@
   }
 
   @media screen and (max-width: 749px) {
-    .ll-collection-description__inner--ruled {
-      padding-block-start: 20px;
+    .ll-collection-description__inner {
+      gap: 14px;
+
+      /* Chrome moves to `__card`; the wrapper goes back to being a wrapper. */
+      max-width: none;
+      padding: 0;
+      background-color: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    /* Stacked and outside the card, so the Caveat line sits under the heading
+       rather than beside it. */
+    .ll-collection-description__header {
+      flex-direction: column;
+      gap: 2px;
+      padding-block-end: 0;
+      border-block-end: 0;
     }
 
     .ll-collection-description__heading {
-      font-size: 1.25rem; /* 20px */
+      font-size: 1.3125rem; /* 21px */
+    }
+
+    .ll-collection-description__card {
+      padding: 18px 18px 6px;
+      background-color: var(--ll-paper-card);
+      border: 1px solid var(--ll-border-strong);
+      border-radius: var(--ll-radius-tight);
+    }
+
+    .ll-collection-description__body {
+      margin-block-start: 0;
+      font-size: 0.9375rem; /* 15px */
+      line-height: 1.7;
+    }
+
+    .ll-collection-description__body > * {
+      margin-block: 0 14px;
+    }
+
+    .ll-collection-description__body :is(h2, h3, h4, h5, h6) {
+      margin-block: 20px 14px;
+      font-size: 1rem; /* 16px */
+    }
+
+    /* The collapse itself: everything past the lead is out of the flow, and
+       out of the accessibility tree with it, until the toggle flips. */
+    ll-expandable-text:not([data-expanded='true']) .ll-collection-description__body > * + * {
+      display: none;
+    }
+
+    ll-expandable-text[data-lead='2']:not([data-expanded='true'])
+      .ll-collection-description__body
+      > :nth-child(-n + 2) {
+      display: revert;
+    }
+
+    ll-expandable-text[data-lead='3']:not([data-expanded='true'])
+      .ll-collection-description__body
+      > :nth-child(-n + 3) {
+      display: revert;
+    }
+
+    .ll-collection-description__toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      /* 44px is the tap target; the row is the full width of the card so the
+         whole seam is pressable, as drawn. */
+      min-height: 44px;
+      margin-block-start: 2px;
+      padding: 0;
+      background: none;
+      border: 0;
+      border-block-start: var(--ll-stitch);
+      font-family: var(--font-body--family);
+      font-weight: 800;
+      font-size: 0.875rem; /* 14px */
+      color: var(--ll-moor);
+      text-align: start;
+      cursor: pointer;
+    }
+
+    .ll-collection-description__toggle-caret {
+      font-size: 1.0625rem; /* 17px */
+      line-height: 1;
+    }
+
+    /* Only one label and one chevron are true at a time. */
+    .ll-collection-description__toggle [data-when='expanded'],
+    ll-expandable-text[data-expanded='true'] .ll-collection-description__toggle [data-when='collapsed'] {
+      display: none;
+    }
+
+    ll-expandable-text[data-expanded='true'] .ll-collection-description__toggle [data-when='expanded'] {
+      display: inline;
     }
   }
 {% endstylesheet %}
@@ -259,14 +364,20 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Shows the collection's description from Products → Collections. Long descriptions are collapsed behind a link so they do not push the products down."
+      "content": "Shows the collection's description from Products → Collections. On mobile everything past the opening paragraph sits behind a Read more row so the copy does not bury the footer."
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "info": "Leave empty for no heading.",
-      "default": "More about this collection"
+      "info": "Use [collection] for the collection name. Leave empty for no heading.",
+      "default": "More about our [collection]"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_aside",
+      "label": "Show handwritten note",
+      "default": true
     },
     {
       "type": "checkbox",
@@ -283,33 +394,46 @@
     },
     {
       "type": "header",
-      "content": "Collapsing"
+      "content": "Mobile"
     },
     {
       "type": "checkbox",
-      "id": "collapse",
-      "label": "Collapse long descriptions",
+      "id": "collapse_on_mobile",
+      "label": "Collapse behind Read more",
+      "info": "Mobile only. The full text is always present for search engines.",
       "default": true
     },
     {
-      "type": "range",
-      "id": "collapsed_lines",
-      "label": "Lines shown when collapsed",
-      "min": 3,
-      "max": 14,
-      "step": 1,
-      "default": 6
+      "type": "select",
+      "id": "mobile_lead",
+      "label": "Paragraphs shown before Read more",
+      "info": "Raise this if your description opens with a short bold line.",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        }
+      ],
+      "default": "1"
     },
     {
       "type": "text",
       "id": "more_label",
-      "label": "Expand link",
+      "label": "Expand label",
       "default": "Read more"
     },
     {
       "type": "text",
       "id": "less_label",
-      "label": "Collapse link",
+      "label": "Collapse label",
       "default": "Read less"
     },
     {
@@ -320,7 +444,8 @@
       "type": "color",
       "id": "background_color",
       "label": "t:settings.background_color",
-      "placeholder": "t:settings.default"
+      "placeholder": "t:settings.default",
+      "default": "#efe7d2"
     },
     {
       "type": "header",
@@ -334,7 +459,7 @@
       "max": 100,
       "step": 1,
       "unit": "px",
-      "default": 8
+      "default": 56
     },
     {
       "type": "range",
@@ -344,13 +469,25 @@
       "max": 100,
       "step": 1,
       "unit": "px",
-      "default": 48
+      "default": 64
     }
   ],
   "presets": [
     {
       "name": "Collection description",
-      "category": "Lighthouse Lane"
+      "category": "Lighthouse Lane",
+      "blocks": {
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "source": "text",
+            "text": "a bit of background",
+            "font_size": "1.1875rem",
+            "rotation": -1
+          }
+        }
+      }
     }
   ]
 }
