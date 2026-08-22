@@ -1,0 +1,165 @@
+{% comment %}
+  Original vs print — a note from Katie.
+
+  The pinned paper note on artwork product pages, between the price and the
+  variant picker. Body comes from the product's custom.original_vs_print
+  rich text metafield so every print can carry its own note (original still
+  available, sold, hanging in the Haworth shop, and so on). The block renders
+  nothing when the metafield is empty, so it is safe to leave in the template
+  for prints without a note.
+
+  Heading and the ask link are settings with design copy as defaults; the
+  link points at the contact page so "ask" costs one click.
+{% endcomment %}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign note = closest.product.metafields.custom.original_vs_print.value
+  if note == blank
+    assign note = product.metafields.custom.original_vs_print.value
+  endif
+-%}
+
+{%- if note != blank -%}
+  <aside
+    class="ll-artist-note spacing-style"
+    style="{% render 'spacing-style', settings: block_settings %}"
+    {{ block.shopify_attributes }}
+  >
+    {%- if block_settings.heading != blank -%}
+      <p class="ll-artist-note__heading">{{ block_settings.heading }}</p>
+    {%- endif -%}
+    <div class="ll-artist-note__body">{{ note }}</div>
+    {%- if block_settings.link_label != blank and block_settings.link != blank -%}
+      <a class="ll-artist-note__link" href="{{ block_settings.link }}">{{ block_settings.link_label }}</a>
+    {%- endif -%}
+  </aside>
+{%- endif -%}
+
+{% stylesheet %}
+  /* A note pinned to the buy column: card cream, hairline border, a strip of
+     tape and half a degree of tilt. Tokens from ll-custom.css. */
+  .ll-artist-note {
+    position: relative;
+    padding: 16px 18px 14px;
+    background: var(--ll-paper-card, #fdfaf0);
+    border: 1px solid var(--ll-border-strong, #c9bc9f);
+    border-radius: 3px;
+    box-shadow: 3px 4px 0 rgb(46 42 36 / 8%);
+    transform: rotate(-0.5deg);
+  }
+
+  .ll-artist-note::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 72px;
+    height: 18px;
+    transform: translateX(-50%) rotate(-1deg);
+    background: var(--ll-tape-fill, rgb(214 203 177 / 55%));
+    border: 1px solid var(--ll-tape-border, rgb(179 167 140 / 45%));
+  }
+
+  .ll-artist-note__heading {
+    margin: 0 0 6px;
+    font-family: var(--font-accent--family);
+    font-size: 1.3125rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ll-vermillion, #bf4a33);
+  }
+
+  .ll-artist-note__body,
+  .ll-artist-note__body p {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--color-foreground);
+  }
+
+  .ll-artist-note__body p + p {
+    margin-top: 6px;
+  }
+
+  .ll-artist-note__link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--ll-moor, #43573e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .ll-artist-note__link:hover {
+    color: var(--ll-vermillion);
+    text-decoration: underline wavy var(--ll-vermillion);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ll-artist-note {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Artist note",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Body text comes from the product metafield custom.original_vs_print. The note hides when that metafield is empty."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Original vs print — a note from Katie"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Ask about the original"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Artist note",
+      "category": "Lighthouse Lane"
+    }
+  ]
+}
+{% endschema %}

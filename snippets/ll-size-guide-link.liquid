@@ -17,9 +17,16 @@
 {%- liquid
   assign option_name_down = option_name | downcase
   assign guide_page = pages[settings.ll_size_guide_page]
+
+  # No size guide on artwork — A-series print sizes need no fit chart, and the
+  # design says so explicitly. The artwork template is product.artwork.json.
+  assign suppressed = false
+  if product.template_suffix == 'artwork'
+    assign suppressed = true
+  endif
 -%}
 
-{%- if option_name_down contains 'size' and guide_page != blank and guide_page.url != blank -%}
+{%- if suppressed == false and option_name_down contains 'size' and guide_page != blank and guide_page.url != blank -%}
   <a class="ll-size-guide-link" href="{{ guide_page.url }}">
     {{- 'Size guide' -}}
   </a>
