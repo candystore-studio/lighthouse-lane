@@ -1,0 +1,106 @@
+{% comment %}
+  Buy notes — the reassurance under Add to basket.
+
+  Two muted Karla lines from the design's buy column: delivery cost first,
+  returns and provenance second. Public block so it drops into the PDP details
+  column (or anywhere else) without touching a stock file. Copy is settings so
+  Howard can edit the threshold or wording from the editor; defaults carry the
+  design copy.
+
+  The delivery line leads with the free threshold because that is the claim
+  that closes the sale; the standard price rides behind it in peat so it reads
+  as small print, not a warning.
+{% endcomment %}
+
+{%- liquid
+  assign block_settings = block.settings
+-%}
+
+{%- if block_settings.line_delivery != blank or block_settings.line_returns != blank -%}
+  <div
+    class="ll-buy-notes spacing-style"
+    style="{% render 'spacing-style', settings: block_settings %}"
+    {{ block.shopify_attributes }}
+  >
+    {%- comment -%} Richtext already arrives wrapped in <p>, so wrap in divs. {%- endcomment -%}
+    {%- if block_settings.line_delivery != blank -%}
+      <div class="ll-buy-notes__line ll-buy-notes__line--delivery">{{ block_settings.line_delivery }}</div>
+    {%- endif -%}
+    {%- if block_settings.line_returns != blank -%}
+      <div class="ll-buy-notes__line">{{ block_settings.line_returns }}</div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .ll-buy-notes {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ll-buy-notes__line,
+  .ll-buy-notes__line p {
+    margin: 0;
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.5;
+    color: var(--ll-peat, var(--color-foreground));
+  }
+
+  /* The free-delivery claim is the strong half of the line. */
+  .ll-buy-notes__line--delivery strong {
+    color: var(--color-foreground);
+    font-weight: 700;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Buy notes",
+  "tag": null,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "line_delivery",
+      "label": "Delivery line",
+      "default": "<p><strong>Free UK delivery over £44.99</strong> · £2.95 standard delivery</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "line_returns",
+      "label": "Returns line",
+      "default": "<p>30-day returns · designed &amp; posted from Haworth, Yorkshire</p>"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Buy notes",
+      "category": "Lighthouse Lane"
+    }
+  ]
+}
+{% endschema %}

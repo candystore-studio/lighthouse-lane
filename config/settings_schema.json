@@ -2116,5 +2116,16 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Lighthouse Lane",
+    "settings": [
+      {
+        "type": "page",
+        "id": "ll_size_guide_page",
+        "label": "Size guide page",
+        "info": "Linked from the size row on clothing product pages. Leave unset to hide the link."
+      }
+    ]
   }
 ]

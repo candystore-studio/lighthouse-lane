@@ -1,0 +1,26 @@
+{% comment %}
+  Size guide link — sits on the Size label row of the variant picker, as in
+  the design ("Size: M            Size guide").
+
+  Rendered from an LL edit in variant-main-picker.liquid. Shows only when the
+  option is a size option and a size guide page is chosen in theme settings
+  (Lighthouse Lane group). Renders nothing otherwise, so the edit is inert on
+  colour rows, artwork framing options, and stores without the page set.
+
+  Accepts:
+  - option_name {String}: the product option's name, e.g. "UK Size".
+
+  Usage:
+  {% render 'll-size-guide-link', option_name: product_option.name %}
+{% endcomment %}
+
+{%- liquid
+  assign option_name_down = option_name | downcase
+  assign guide_page = pages[settings.ll_size_guide_page]
+-%}
+
+{%- if option_name_down contains 'size' and guide_page != blank and guide_page.url != blank -%}
+  <a class="ll-size-guide-link" href="{{ guide_page.url }}">
+    {{- 'Size guide' -}}
+  </a>
+{%- endif -%}

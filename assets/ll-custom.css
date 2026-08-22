@@ -964,3 +964,81 @@ product-price .compare-at-price {
     display: none;
   }
 }
+
+/* ==========================================================================
+   11. Product page — the buy column
+   Composition lives in templates/product.json (breadcrumbs, rating, price
+   row with the Caveat aside, size guide link, buy notes, collapsibles).
+   This layer is the skin the block settings cannot reach.
+   ========================================================================== */
+
+/* Rating under the title — amber ink stars, count in peat, as on the cards. */
+.product-information .rating-wrapper {
+  --star-fill-color: var(--ll-star-gold);
+  --star-fill-color-rgb: 217 169 78;
+}
+
+.product-information .rating-wrapper .rating-count {
+  font-size: 0.875rem;
+  color: var(--ll-peat);
+}
+
+/* The variant legend carries the size guide link; let it span the row. */
+.variant-option fieldset legend {
+  width: 100%;
+}
+
+.ll-size-guide-link {
+  float: inline-end;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--ll-peat);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ll-faded);
+}
+
+.ll-size-guide-link:hover {
+  color: var(--ll-vermillion);
+  text-decoration: underline wavy var(--ll-vermillion);
+}
+
+/* Sold-out variant tickets — scribbled over, not greyed out. A dashed border
+   and a single strike-through line, no app, no image swap. */
+.variant-option input[data-option-available='false'] + label {
+  color: var(--ll-peat);
+  border-style: dashed;
+  border-color: var(--ll-faded);
+  background-image: linear-gradient(
+    to top right,
+    transparent calc(50% - 1px),
+    var(--ll-peat) calc(50% - 1px) calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+}
+
+/* Accordion rows — Karla 700 headings, hairline seams, hand-drawn +/−. */
+.product-information .accordion .details__header {
+  font-family: var(--font-body--family);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Accelerated checkout (Shop Pay et al) renders in a closed shadow DOM;
+   Shopify's supported knobs are these custom properties only. Geometry and
+   skeleton match the brand; the wallet branding itself cannot be restyled.
+   https://shopify.dev/docs/storefronts/themes/pricing-payments/accelerated-checkout */
+shopify-accelerated-checkout {
+  --shopify-accelerated-checkout-button-block-size: 48px;
+  --shopify-accelerated-checkout-button-border-radius: 4px;
+  --shopify-accelerated-checkout-button-box-shadow: 3px 4px 0 rgb(46 42 36 / 12%);
+  --shopify-accelerated-checkout-skeleton-background-color: var(--ll-paper-tint);
+}
+
+shopify-accelerated-checkout-cart {
+  --shopify-accelerated-checkout-button-block-size: 44px;
+  --shopify-accelerated-checkout-button-border-radius: 4px;
+  --shopify-accelerated-checkout-button-box-shadow: none;
+  --shopify-accelerated-checkout-row-gap: 8px;
+  --shopify-accelerated-checkout-skeleton-background-color: var(--ll-paper-tint);
+}

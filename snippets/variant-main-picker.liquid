@@ -98,6 +98,12 @@
               {%- if variant_style == 'swatch' -%}
                 <span class="variant-option__swatch-value">{{ product_option.selected_value }}</span>
               {%- endif %}
+              {%- comment -%}
+                LL edit: size guide link on the size option's label row, per the
+                design. Renders nothing unless the option is a size and a guide
+                page is set in theme settings. See ll-size-guide-link.liquid.
+              {%- endcomment -%}
+              {%- render 'll-size-guide-link', option_name: product_option.name -%}
             </legend>
             {%- for product_option_value in product_option.values -%}
               {% if product_option_value.size > longest_value and option_id_attribute %}

@@ -34,13 +34,13 @@
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "grid",
+            "media_presentation": "carousel",
             "media_columns": "two",
             "image_gap": 4,
             "large_first_image": false,
             "slideshow_controls_style": "counter",
             "slideshow_mobile_controls_style": "dots",
-            "thumbnail_position": "right",
+            "thumbnail_position": "bottom",
             "thumbnail_width": 44,
             "thumbnail_radius": 0,
             "aspect_ratio": "adapt",
@@ -150,32 +150,101 @@
                   },
                   "blocks": {}
                 },
-                "price_tVjtKg": {
-                  "type": "price",
+                "ll_rating": {
+                  "type": "review",
                   "settings": {
-                    "show_sale_price_first": true,
-                    "show_installments": false,
-                    "show_tax_info": false,
-                    "type_preset": "paragraph",
-                    "width": "100%",
-                    "alignment": "left",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
+                    "stars_style": "shaded",
+                    "show_number": true,
                     "text_color": "",
-                    "padding-block-start": 4,
+                    "type_preset": "paragraph",
+                    "width": "fit-content",
+                    "alignment": "left"
+                  }
+                },
+                "group_price_row": {
+                  "type": "group",
+                  "name": "Price row",
+                  "settings": {
+                    "content_direction": "row",
+                    "vertical_on_mobile": false,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": true,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 12,
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
                     "padding-inline-end": 0
                   },
-                  "blocks": {}
+                  "blocks": {
+                    "price_tVjtKg": {
+                      "type": "price",
+                      "settings": {
+                        "show_sale_price_first": true,
+                        "show_installments": false,
+                        "show_tax_info": false,
+                        "type_preset": "paragraph",
+                        "width": "100%",
+                        "alignment": "left",
+                        "font": "var(--font-heading--family)",
+                        "font_size": "1.5rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "text_color": "",
+                        "padding-block-start": 4,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "ll_price_aside": {
+                      "type": "ll-hand-aside",
+                      "settings": {
+                        "source": "product_note",
+                        "text": "",
+                        "font_size": "1.0625rem",
+                        "rotation": -1.0,
+                        "alignment": "left",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "price_tVjtKg",
+                    "ll_price_aside"
+                  ]
                 }
               },
               "block_order": [
                 "text_xrnftG",
-                "price_tVjtKg"
+                "ll_rating",
+                "group_price_row"
               ]
             },
             "divider_VJhene": {
@@ -273,39 +342,113 @@
               },
               "block_order": []
             },
-            "text_aEtTtq": {
-              "type": "text",
-              "name": "t:names.product_description",
+            "ll_breadcrumbs_pdp": {
+              "type": "ll-breadcrumbs",
               "settings": {
-                "text": "{{ closest.product.description }}",
-                "width": "100%",
-                "max_width": "normal",
+                "home_label": "Home",
+                "structured_data": true,
                 "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
                 "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "padding-block-end": 4
+              }
+            },
+            "ll_buy_notes": {
+              "type": "ll-buy-notes",
+              "settings": {
+                "line_delivery": "<p><strong>Free UK delivery over £44.99</strong> · £2.95 standard delivery</p>",
+                "line_returns": "<p>30-day returns · designed &amp; posted from Haworth, Yorkshire</p>",
+                "padding-block-start": 4,
+                "padding-block-end": 0
+              }
+            },
+            "accordion_pdp": {
+              "type": "accordion",
+              "settings": {
+                "icon": "plus",
+                "dividers": true,
+                "divider_color": "",
+                "type_preset": "h6"
               },
-              "blocks": {}
+              "blocks": {
+                "row_details": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Product details",
+                    "open_by_default": true
+                  },
+                  "blocks": {
+                    "row_details_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "{{ closest.product.description }}",
+                        "width": "100%",
+                        "alignment": "left",
+                        "type_preset": "rte"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "row_details_text"
+                  ]
+                },
+                "row_fabric": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Fabric & care",
+                    "open_by_default": false
+                  },
+                  "blocks": {
+                    "row_fabric_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "{{ closest.product.metafields.custom.fabric_care.value }}",
+                        "width": "100%",
+                        "alignment": "left",
+                        "type_preset": "rte"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "row_fabric_text"
+                  ]
+                },
+                "row_delivery": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Delivery & returns",
+                    "open_by_default": false
+                  },
+                  "blocks": {
+                    "row_delivery_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Free UK delivery on orders over £44.99, £2.95 standard. 30-day returns, by post or in any of our three shops. Easy exchanges, just get in touch.</p>",
+                        "width": "100%",
+                        "alignment": "left",
+                        "type_preset": "rte"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "row_delivery_text"
+                  ]
+                }
+              },
+              "block_order": [
+                "row_details",
+                "row_fabric",
+                "row_delivery"
+              ]
             }
           },
           "block_order": [
+            "ll_breadcrumbs_pdp",
             "group_icgrde",
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
-            "text_aEtTtq"
+            "ll_buy_notes",
+            "accordion_pdp"
           ]
         }
       },
@@ -331,7 +474,7 @@
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "<h3>You may also like </h3>",
+            "text": "<h3>Wear it with</h3>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -441,10 +584,21 @@
             "product_title_M7MJkb",
             "price_gLWgA6"
           ]
+        },
+        "ll_rec_aside": {
+          "type": "ll-hand-aside",
+          "settings": {
+            "source": "text",
+            "text": "— goes reyt well together",
+            "font_size": "1.1875rem",
+            "rotation": -1,
+            "alignment": "left"
+          }
         }
       },
       "block_order": [
-        "text_cbcgyb"
+        "text_cbcgyb",
+        "ll_rec_aside"
       ],
       "name": "t:names.product_recommendations",
       "settings": {
