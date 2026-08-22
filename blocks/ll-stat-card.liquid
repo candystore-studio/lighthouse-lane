@@ -1,0 +1,190 @@
+{% comment %}
+  Stat card — the little tilted card of numbers pinned by the hero photo.
+
+  Public block, so it can sit in any `@theme` surface. It only draws the card:
+  the numbers themselves are `_ll-stat` blocks, the same ones the trust strip
+  uses, restyled here by scope (Bevan figure in moor green, small caps
+  sub-line) so there is one stat block in the theme rather than two.
+
+  Placement is a setting, not a section skin, so it can be turned off in the
+  editor if the overhang ever looks wrong:
+
+    in-flow  — the card sits in the column like any other block (mobile
+               always does this, per the design)
+    overhang — desktop only: pulled to the bottom of a media-with-content
+               text column and allowed to lean over the photograph beside it
+{% endcomment %}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign overhang = false
+  if block_settings.desktop_position == 'overhang'
+    assign overhang = true
+  endif
+-%}
+
+<div
+  class="ll-stat-card"
+  data-overhang="{{ overhang }}"
+  style="--ll-stat-card-rotation: {{ block_settings.rotation }}deg;"
+  {{ block.shopify_attributes }}
+>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .ll-stat-card {
+    display: flex;
+    align-items: stretch;
+    width: fit-content;
+    max-width: 100%;
+    padding: 12px 8px;
+    background: var(--ll-paper-card, #fdfaf0);
+    border: 1px solid var(--ll-border-strong, #c9bc9f);
+    border-radius: var(--ll-radius-tight, 3px);
+    box-shadow: var(--ll-shadow-offset, 3px 4px 0 rgb(46 42 36 / 0.12));
+    rotate: var(--ll-stat-card-rotation, -1.5deg);
+  }
+
+  /* The stat block is the trust strip's plank; inside the card it is a
+     price-ticket figure with a small-caps sub-line, so the board padding
+     comes off and the type is re-set. */
+  .ll-stat-card .ll-stat {
+    gap: 0;
+    padding: 0 11px;
+  }
+
+  .ll-stat-card .ll-stat + .ll-stat {
+    border-inline-start: 1px solid var(--ll-stitch-color, #d6cbb1);
+  }
+
+  .ll-stat-card .ll-stat__figure {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.2;
+    color: var(--ll-moor, #43573e);
+  }
+
+  .ll-stat-card .ll-stat__label {
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    /* Design uses #B3A78C here; at 11px that is ~2.4:1 on card cream and
+       fails AA, so the peat tone carries it (~5.3:1). */
+    color: var(--ll-peat, #6e6454);
+  }
+
+  @media screen and (min-width: 750px) {
+    /* Overhang: anchored to the bottom of the text column and allowed to
+       lean out over the media column beside it. Nothing here depends on the
+       grid maths, so it holds at any page width; the column keeps room for
+       the card with its own bottom padding. */
+    .media-with-content__content:has(> .group-block-content > .ll-stat-card[data-overhang='true']) {
+      position: relative;
+    }
+
+    .media-with-content__content
+      > .group-block-content
+      > .ll-stat-card[data-overhang='true'] {
+      position: absolute;
+      z-index: 2;
+      inset-block-end: -22px;
+      inset-inline-start: auto;
+      inset-inline-end: -28px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-stat-card {
+      width: 100%;
+      justify-content: space-between;
+      padding: 14px 8px;
+      box-shadow: 2px 3px 0 rgb(46 42 36 / 0.12);
+    }
+
+    .ll-stat-card .ll-stat__figure {
+      font-size: 1.125rem; /* 18px */
+    }
+
+    .ll-stat-card .ll-stat__label {
+      font-size: 0.625rem; /* 10px */
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ll-stat-card {
+      rotate: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Stat card",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "_ll-stat"
+    }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "desktop_position",
+      "label": "Desktop position",
+      "info": "Overhang only works in a text column that sits beside an image. On mobile the card always sits in the column.",
+      "options": [
+        {
+          "value": "in-flow",
+          "label": "In the column"
+        },
+        {
+          "value": "overhang",
+          "label": "Overhanging the image"
+        }
+      ],
+      "default": "in-flow"
+    },
+    {
+      "type": "range",
+      "id": "rotation",
+      "label": "Rotation",
+      "min": -1.5,
+      "max": 1.5,
+      "step": 0.5,
+      "unit": "deg",
+      "default": -1.5
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stat card",
+      "category": "Lighthouse Lane",
+      "blocks": {
+        "stat_1": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "2015",
+            "label": "First shop"
+          }
+        },
+        "stat_2": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "3",
+            "label": "Shops today"
+          }
+        },
+        "stat_3": {
+          "type": "_ll-stat",
+          "settings": {
+            "stat": "212",
+            "label": "5★ reviews"
+          }
+        }
+      },
+      "block_order": ["stat_1", "stat_2", "stat_3"]
+    }
+  ]
+}
+{% endschema %}

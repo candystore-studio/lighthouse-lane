@@ -1,16 +1,23 @@
 {% comment %}
-  Shop cards — luggage labels for the three shops.
+  Shop cards — the three shops, as labels or as rows.
 
   Aged-paper band opened by a stitched seam. Heading row pairs the Bevan
   title with a hand aside (the global `ll-hand-aside` block, rendered
   statically so it is editable in the theme editor but cannot wander off).
 
-  Cards are `_ll-shop-card` blocks; the string-tag rotations and the middle
-  card's drop are dealt here by position so the cards themselves stay clean.
-  Reused on the About page with map imagery.
+  Two desktop layouts off one setting, so the shops are authored once:
 
-  On mobile the grid is a disclosure group: one card open at a time, handled
-  by <ll-shop-cards>. Desktop is untouched — every card open, as designed.
+    labels — the homepage: three luggage labels tied on at slightly
+             different angles, the middle one hanging lower
+    rows   — the About page: full-width panels, photo alternating side to
+             side down the page
+
+  Cards are `_ll-shop-card` blocks; the rotations, the middle card's drop and
+  the row alternation are dealt here by position so the cards stay clean.
+
+  On mobile both layouts are the same disclosure group: one card open at a
+  time, handled by <ll-shop-cards>. Desktop is untouched — every card open,
+  as designed.
 {% endcomment %}
 
 <script
@@ -29,8 +36,14 @@
   class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 <div
-  class="section section--page-width ll-shop-cards spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}{% if section.settings.show_seam %} ll-shop-cards--seam{% endif %}"
+  {% if section.settings.anchor != blank %}
+    id="{{ section.settings.anchor | handle }}"
+  {% endif %}
+  class="section section--page-width ll-shop-cards ll-shop-cards--{{ section.settings.layout | default: 'labels' }} spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}{% if section.settings.show_seam %} ll-shop-cards--seam{% endif %}"
   style="{% render 'spacing-style', settings: section.settings %}"
+  {% if section.settings.anchor != blank %}
+    tabindex="-1"
+  {% endif %}
 >
   <div class="ll-shop-cards__inner">
     {%- if section.settings.heading != blank -%}
@@ -69,25 +82,41 @@
 
   .ll-shop-cards__grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
     align-items: start;
   }
 
-  /* String-tag scatter: tied on at slightly different angles, middle label
-     hanging a touch lower. Repeats per row of three. */
   @media screen and (min-width: 750px) {
-    .ll-shop-cards__grid > :nth-child(3n + 1) {
+    .ll-shop-cards--labels .ll-shop-cards__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* String-tag scatter: tied on at slightly different angles, middle label
+       hanging a touch lower. Repeats per row of three. */
+    .ll-shop-cards--labels .ll-shop-cards__grid > :nth-child(3n + 1) {
       rotate: -0.8deg;
     }
 
-    .ll-shop-cards__grid > :nth-child(3n + 2) {
+    .ll-shop-cards--labels .ll-shop-cards__grid > :nth-child(3n + 2) {
       rotate: 0.6deg;
       margin-block-start: 14px;
     }
 
-    .ll-shop-cards__grid > :nth-child(3n) {
+    .ll-shop-cards--labels .ll-shop-cards__grid > :nth-child(3n) {
       rotate: -0.4deg;
+    }
+
+    /* Rows read down the page with the photograph swapping sides, so the eye
+       zig-zags rather than running down one edge. */
+    .ll-shop-cards--rows .ll-shop-cards__grid > :nth-child(even) {
+      grid-template-columns: minmax(0, 1fr) 25rem;
+    }
+
+    .ll-shop-cards--rows .ll-shop-cards__grid > :nth-child(even) .ll-shop-card__media {
+      order: 2;
+      border-inline-end: none;
+      border-inline-start: var(--ll-stitch, 2px dashed #d6cbb1);
     }
   }
 
@@ -146,6 +175,23 @@
       "default": "Visit our shops"
     },
     {
+      "type": "select",
+      "id": "layout",
+      "label": "Desktop layout",
+      "info": "Mobile is the same tap-to-open list either way.",
+      "options": [
+        {
+          "value": "labels",
+          "label": "Luggage labels (three across)"
+        },
+        {
+          "value": "rows",
+          "label": "Rows (photo beside the details)"
+        }
+      ],
+      "default": "labels"
+    },
+    {
       "type": "color",
       "id": "background_color",
       "label": "t:settings.background_color",
@@ -156,6 +202,12 @@
       "id": "show_seam",
       "label": "Stitched seam above",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Anchor",
+      "info": "Lets a button jump here, e.g. ll-about-shops linked as #ll-about-shops."
     },
     {
       "type": "header",
@@ -217,6 +269,61 @@
           "settings": {
             "name": "Harrogate",
             "details": "<p>Address 3<br>Open daily 10am–5pm</p>",
+            "mobile_open": false
+          }
+        }
+      },
+      "block_order": ["shop_haworth", "shop_skipton", "shop_harrogate"]
+    },
+    {
+      "name": "Shop rows",
+      "category": "Lighthouse Lane",
+      "settings": {
+        "layout": "rows",
+        "heading": "Three shops across Yorkshire"
+      },
+      "blocks": {
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "text": "— come say ey up",
+            "font_size": "1.5rem",
+            "rotation": -1
+          }
+        },
+        "shop_haworth": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Haworth",
+            "since": "Open since 2015",
+            "ribbon": "Our first",
+            "ribbon_color": "vermillion",
+            "details": "<p>Address 1<br>Open daily 10am–5pm</p>",
+            "address": "<p>Address 1</p>",
+            "phone": "01535 957410",
+            "mobile_open": true
+          }
+        },
+        "shop_skipton": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Skipton",
+            "since": "Open since 2021",
+            "details": "<p>Address 2<br>Open daily 10am–5pm</p>",
+            "address": "<p>Address 2</p>",
+            "mobile_open": false
+          }
+        },
+        "shop_harrogate": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Harrogate",
+            "since": "Open since 2024",
+            "ribbon": "Newest",
+            "ribbon_color": "moor",
+            "details": "<p>Address 3<br>Open daily 10am–5pm</p>",
+            "address": "<p>Address 3</p>",
             "mobile_open": false
           }
         }

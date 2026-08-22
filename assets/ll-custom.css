@@ -18,6 +18,8 @@
     6. Footer
     7. Product cards
     8. Homepage — skin over stock sections (keys named in index.json)
+    9. Collection — skin over the stock filter bar, grid and pagination
+   10. About — skin over stock sections (keys named in page.about.json)
 */
 
 /* ==========================================================================
@@ -555,6 +557,7 @@ product-price .compare-at-price {
    and taped here. Tape sits above the frame, so clipping must stay off. */
 
 .shopify-section[id$='__ll_hero'] .media-block__media,
+.shopify-section[id$='__ll_about_hero'] .media-block__media,
 .shopify-section[id$='__ll_katies_art'] .media-block__media {
   position: relative;
   overflow: visible;
@@ -562,6 +565,7 @@ product-price .compare-at-price {
 }
 
 .shopify-section[id$='__ll_hero'] .media-block__media::after,
+.shopify-section[id$='__ll_about_hero'] .media-block__media::after,
 .shopify-section[id$='__ll_katies_art'] .media-block__media::after {
   content: '';
   position: absolute;
@@ -574,7 +578,8 @@ product-price .compare-at-price {
   transform: translateX(-50%) rotate(var(--ll-media-tape-rotation, -2deg));
 }
 
-.shopify-section[id$='__ll_hero'] .media-block__media {
+.shopify-section[id$='__ll_hero'] .media-block__media,
+.shopify-section[id$='__ll_about_hero'] .media-block__media {
   rotate: 1.2deg;
 }
 
@@ -586,6 +591,7 @@ product-price .compare-at-price {
 /* Breathing room so the tilt and tape never kiss the section edges. */
 @media screen and (min-width: 750px) {
   .shopify-section[id$='__ll_hero'] .media-block,
+  .shopify-section[id$='__ll_about_hero'] .media-block,
   .shopify-section[id$='__ll_katies_art'] .media-block {
     padding-block: 44px;
   }
@@ -593,6 +599,7 @@ product-price .compare-at-price {
 
 @media screen and (max-width: 749px) {
   .shopify-section[id$='__ll_hero'] .media-block,
+  .shopify-section[id$='__ll_about_hero'] .media-block,
   .shopify-section[id$='__ll_katies_art'] .media-block {
     padding-block-start: 20px;
     padding-inline: 20px;
@@ -667,8 +674,10 @@ product-price .compare-at-price {
 /* The hand-made tilt is decoration; take it off for reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   .shopify-section[id$='__ll_hero'] .media-block__media,
+  .shopify-section[id$='__ll_about_hero'] .media-block__media,
   .shopify-section[id$='__ll_katies_art'] .media-block__media,
-  .shopify-section[id$='__ll_instagram'] .image-block {
+  .shopify-section[id$='__ll_instagram'] .image-block,
+  .shopify-section[id$='__ll_about_press'] .image-block {
     rotate: none;
   }
 }
@@ -870,5 +879,88 @@ product-price .compare-at-price {
 
   .pagination .pagination__list {
     gap: 6px;
+  }
+}
+
+/* ==========================================================================
+   10. About — skin over stock sections
+   Same trick as 8: these hang off the section keys authored in
+   templates/page.about.json (`ll_about_hero`, `ll_about_press`). The hero
+   photograph is skinned alongside the homepage hero in 8 — it is the same
+   composition, so it shares the tape and the tilt.
+   ========================================================================== */
+
+/* The hero band closes on a stitch, the way the homepage bands do. */
+.shopify-section[id$='__ll_about_hero'] .section {
+  border-block-end: var(--ll-stitch);
+}
+
+/* Room under the text column so the stat card can hang off the bottom
+   without landing on the buttons. */
+@media screen and (min-width: 750px) {
+  .shopify-section[id$='__ll_about_hero'] .media-with-content__content {
+    padding-block-end: 72px;
+  }
+}
+
+/* -- Press strip: the rating line and the cuttings --------------------------
+   Stock section.liquid: a row group holding the rating text and link, then a
+   second group of logo images. The stars are drawn as a pseudo-element
+   rather than typed into the text, so a screen reader announces the rating
+   once, in words, instead of five black stars. */
+
+.shopify-section[id$='__ll_about_press'] .section {
+  border-block-start: var(--ll-stitch);
+}
+
+.shopify-section[id$='__ll_about_press'] .text-block:first-child::before {
+  content: '★★★★★';
+  margin-inline-end: 12px;
+  letter-spacing: 2px;
+  color: var(--ll-star);
+}
+
+@media screen and (min-width: 750px) {
+  .shopify-section[id$='__ll_about_press'] .group-block-content:has(> .image-block) {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .shopify-section[id$='__ll_about_press'] .image-block {
+    width: 6.875rem; /* 110px */
+  }
+}
+
+.shopify-section[id$='__ll_about_press'] .image-block:nth-child(3n + 1) {
+  rotate: -1deg;
+}
+
+.shopify-section[id$='__ll_about_press'] .image-block:nth-child(3n + 2) {
+  rotate: 0.8deg;
+}
+
+.shopify-section[id$='__ll_about_press'] .image-block:nth-child(3n) {
+  rotate: -0.5deg;
+}
+
+@media screen and (max-width: 749px) {
+  .shopify-section[id$='__ll_about_press'] .text-block:first-child::before {
+    margin-inline-end: 8px;
+  }
+
+  /* Two cuttings side by side on mobile, as the design has it. */
+  .shopify-section[id$='__ll_about_press'] .group-block-content:has(> .image-block) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .shopify-section[id$='__ll_about_press'] .image-block {
+    width: auto;
+  }
+
+  .shopify-section[id$='__ll_about_press'] .image-block:nth-child(n + 3) {
+    display: none;
   }
 }

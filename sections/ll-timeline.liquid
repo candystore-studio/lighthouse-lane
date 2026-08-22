@@ -1,0 +1,325 @@
+{% comment %}
+  Timeline — how we got here, told in chapters.
+
+  Desktop is a year rail: right-aligned Bevan years, a dashed spine with a
+  dot per chapter, then the copy and an optional photograph. Mobile is the
+  same chapters as a swipe track under a single dashed line.
+
+  One set of markup, two layouts. The milestones are `display: contents` on
+  desktop so their parts land on this section's grid, and cards on mobile.
+  There is no JavaScript: the mobile track is a scroll-snap row, which the
+  browser already knows how to drive by touch, wheel and keyboard.
+
+  Milestone dates and copy come from Howard — the preset carries the design's
+  headings with placeholder body copy.
+{% endcomment %}
+
+{%- liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  {% if section.settings.anchor != blank %}
+    id="{{ section.settings.anchor | handle }}"
+  {% endif %}
+  class="section section--page-width ll-timeline spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}{% if section.settings.show_seam %} ll-timeline--seam{% endif %}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+  {% if section.settings.anchor != blank %}
+    tabindex="-1"
+  {% endif %}
+>
+  <div class="ll-timeline__inner">
+    {%- if section.settings.heading != blank -%}
+      <div class="ll-timeline__header">
+        <h2 class="ll-timeline__heading">{{ section.settings.heading }}</h2>
+        {% content_for 'block', type: 'll-hand-aside', id: 'aside' %}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.mobile_hint != blank -%}
+      <p class="ll-timeline__hint">{{ section.settings.mobile_hint }}</p>
+    {%- endif -%}
+
+    <div
+      class="ll-timeline__scroller"
+      role="region"
+      aria-label="{{ section.settings.heading | default: 'Our story' | strip_html | escape }}"
+      tabindex="0"
+    >
+      <div class="ll-timeline__cards">
+        {% content_for 'blocks' %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .ll-timeline--seam {
+    border-block-start: var(--ll-stitch, 2px dashed #d6cbb1);
+  }
+
+  .ll-timeline__inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ll-timeline__header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-block-end: 24px;
+  }
+
+  .ll-timeline__heading {
+    margin: 0;
+  }
+
+  .ll-timeline__scroller:focus-visible {
+    outline: var(--focus-outline-width, 2px) solid var(--ll-moor, #43573e);
+    outline-offset: var(--focus-outline-offset, 2px);
+  }
+
+  /* Opening and closing chapters are inked in vermillion, whatever their
+     number; everything between is moor green. */
+  .ll-timeline__cards > :first-child,
+  .ll-timeline__cards > :last-child {
+    --ll-milestone-accent: var(--ll-vermillion, #bf4a33);
+    --ll-milestone-dot-size: 12px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ll-timeline__hint {
+      display: none;
+    }
+
+    /* year | spine | chapter */
+    .ll-timeline__cards {
+      display: grid;
+      grid-template-columns: 11.25rem 1px minmax(0, 1fr);
+      column-gap: 40px;
+    }
+
+    /* Photographs lean alternately, like prints laid out on a table. */
+    .ll-timeline__cards > :nth-child(4n + 2) {
+      --ll-milestone-media-rotation: 0.8deg;
+    }
+
+    .ll-timeline__cards > :nth-child(4n + 3) {
+      --ll-milestone-media-rotation: -0.6deg;
+    }
+
+    .ll-timeline__cards > :nth-child(4n) {
+      --ll-milestone-media-rotation: 1deg;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ll-timeline__header {
+      flex-direction: column;
+      gap: 2px;
+      margin-block-end: 14px;
+    }
+
+    .ll-timeline__hint {
+      margin: 0 0 8px;
+      font-family: var(--font-accent--family);
+      font-weight: var(--font-accent--weight);
+      font-size: 1.0625rem; /* 17px */
+      color: var(--ll-peat, #6e6454);
+    }
+
+    /* Bleeds to the screen edges so the track reads as swipeable, while the
+       first card still lines up with the page gutter. */
+    .ll-timeline__scroller {
+      margin-inline: calc(var(--page-margin, 20px) * -1);
+      padding-inline: var(--page-margin, 20px);
+      padding-block: 32px 12px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .ll-timeline__scroller::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ll-timeline__cards {
+      position: relative;
+      display: flex;
+      gap: 14px;
+      width: max-content;
+      align-items: start;
+    }
+
+    /* The single dashed line the dots hang from, drawn the full scroll
+       width rather than per card. */
+    .ll-timeline__cards::before {
+      content: '';
+      position: absolute;
+      top: -21px;
+      inset-inline: 0;
+      border-block-start: var(--ll-stitch, 2px dashed #c9bc9f);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Timeline",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "_ll-milestone"
+    }
+  ],
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "How we got here"
+    },
+    {
+      "type": "text",
+      "id": "mobile_hint",
+      "label": "Mobile swipe hint",
+      "info": "Shown above the track on mobile only.",
+      "default": "swipe to follow t'story →→"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "default": "#F8F3E6"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_seam",
+      "label": "Stitched seam above",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Anchor",
+      "info": "Lets a button jump here, e.g. ll-about-timeline linked as #ll-about-timeline."
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Timeline",
+      "category": "Lighthouse Lane",
+      "blocks": {
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "text": "— t'long way round, mostly",
+            "font_size": "1.5rem",
+            "rotation": -1
+          }
+        },
+        "milestone_2015": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2015",
+            "year_note": "where it starts",
+            "title": "A small shop in Haworth",
+            "note": "rent were £00 a month, mind",
+            "show_placeholder": true,
+            "placeholder_note": "Photo — opening day, Main Street"
+          }
+        },
+        "milestone_2018": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2018",
+            "year_note": "a name of our own",
+            "title": "Northerner® registered",
+            "show_placeholder": true,
+            "placeholder_note": "Artwork — first Northerner® print"
+          }
+        },
+        "milestone_2020": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2020",
+            "year_note": "shut door, open post",
+            "title": "Wrapping parcels at t'kitchen table",
+            "show_placeholder": false
+          }
+        },
+        "milestone_2021": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2021",
+            "year_note": "shop number two",
+            "title": "Skipton opens on t'high street",
+            "show_placeholder": true,
+            "placeholder_note": "Photo — Skipton shopfront"
+          }
+        },
+        "milestone_2024": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2024",
+            "year_note": "and number three",
+            "title": "Harrogate, in t'Montpellier Quarter",
+            "show_placeholder": true,
+            "placeholder_note": "Photo — Harrogate window"
+          }
+        },
+        "milestone_today": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "Today",
+            "year_note": "still up t'hill",
+            "title": "Three shops, one workroom, same pens",
+            "show_placeholder": false
+          }
+        }
+      },
+      "block_order": [
+        "milestone_2015",
+        "milestone_2018",
+        "milestone_2020",
+        "milestone_2021",
+        "milestone_2024",
+        "milestone_today"
+      ]
+    }
+  ]
+}
+{% endschema %}

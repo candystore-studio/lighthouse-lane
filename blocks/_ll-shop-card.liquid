@@ -1,29 +1,52 @@
 {% comment %}
-  Shop card — a luggage label tied to each shop.
+  Shop card — a luggage label tied to each shop, or a full row on About.
 
-  Private block, only offered inside the Shop cards section. Shopfront photo,
-  Bevan place name, address/hours line and a "Get directions" link, with the
-  punched hole and string-tag rotation drawn in CSS by the parent section.
+  Private block, only offered inside the Shop cards section. Two desktop
+  layouts, chosen by the section's Layout setting:
 
-  On mobile the card is a disclosure: the compact row is the closed state and
-  opening it reveals the shopfront photo above the name, exactly as the
-  design's lead card looks. The photo sits above the name row in the design,
-  which is why this is not a <details> — its content must follow the summary.
-  The toggle is a stretched button over the body so the whole row is the tap
-  target; `ll-shop-cards.js` handles breakpoints and exclusivity.
+    labels — the homepage grid: shopfront photo, Bevan place name, address
+             and hours line, "Get directions" link, punched hole and string
+             rotation drawn by the parent section
+    rows   — the About page: photo panel one side, the shop's details the
+             other, with a ribbon, the year it opened, opening hours and two
+             calls to action. Alternating sides are dealt by the section
 
-  Desktop is unchanged: every card fully open, toggle hidden and disabled.
+  Mobile is the same disclosure in both: the compact row is the closed state
+  and opening it reveals the shopfront photo above the name, exactly as the
+  design's lead card looks. The photo sits above the name row, which is why
+  this is not a <details> — its content must follow the summary. The toggle
+  is stretched over the body so the whole row is the tap target;
+  `ll-shop-cards.js` handles breakpoints and exclusivity.
+
+  Desktop is unchanged by that: every card fully open, toggle hidden and
+  disabled.
+
+  No "open now" badge. Liquid cannot know the time, a manual toggle goes
+  stale, and a shop badged open when it is shut costs more than the badge is
+  worth. The hours are shown instead.
 {% endcomment %}
 
 {%- liquid
   assign block_settings = block.settings
-  assign sizes = '(min-width: 750px) 33vw, 100vw'
+  assign layout = section.settings.layout | default: 'labels'
+  assign is_row = false
+  if layout == 'rows'
+    assign is_row = true
+  endif
+
+  if is_row
+    assign sizes = '(min-width: 750px) 400px, 100vw'
+  else
+    assign sizes = '(min-width: 750px) 33vw, 100vw'
+  endif
   assign widths = '320, 480, 640, 960, 1280'
   assign media_id = 'll-shop-media-' | append: block.id
+
+  assign address = block_settings.address | default: block_settings.details
 -%}
 
 <article
-  class="ll-shop-card"
+  class="ll-shop-card{% if is_row %} ll-shop-card--row{% endif %}"
   data-default-open="{% if block_settings.mobile_open %}true{% else %}false{% endif %}"
   {{ block.shopify_attributes }}
 >
@@ -41,19 +64,83 @@
         <span class="ll-shop-card__placeholder-note">Shopfront photo{% if block_settings.name != blank %} — {{ block_settings.name | strip_html }}{% endif %}</span>
       </div>
     {%- endif -%}
+
+    {%- if is_row and block_settings.ribbon != blank -%}
+      <span class="ll-shop-card__ribbon ll-shop-card__ribbon--{{ block_settings.ribbon_color }}">
+        {{- block_settings.ribbon -}}
+      </span>
+    {%- endif -%}
   </div>
 
   <div class="ll-shop-card__body">
-    {%- if block_settings.name != blank -%}
-      <h3 class="ll-shop-card__name">{{ block_settings.name }}</h3>
-    {%- endif -%}
-    {%- if block_settings.details != blank -%}
-      <div class="ll-shop-card__details rte">{{ block_settings.details }}</div>
-    {%- endif -%}
-    {%- if block_settings.link != blank -%}
-      <a class="ll-shop-card__link" href="{{ block_settings.link }}">
-        {{- block_settings.link_label | default: 'Get directions' -}}
-      </a>
+    <div class="ll-shop-card__title-row">
+      {%- if block_settings.name != blank -%}
+        <h3 class="ll-shop-card__name">{{ block_settings.name }}</h3>
+      {%- endif -%}
+      {%- if is_row and block_settings.since != blank -%}
+        <span class="ll-shop-card__since">{{ block_settings.since }}</span>
+      {%- endif -%}
+    </div>
+
+    {%- if is_row -%}
+      {%- if block_settings.blurb != blank -%}
+        <p class="ll-shop-card__blurb">{{ block_settings.blurb }}</p>
+      {%- endif -%}
+
+      <div class="ll-shop-card__facts">
+        {%- if address != blank or block_settings.phone != blank -%}
+          <div class="ll-shop-card__fact">
+            <span class="ll-shop-card__fact-label">{{ block_settings.address_label | default: 'Find us' }}</span>
+            {%- if address != blank -%}
+              <span class="ll-shop-card__fact-value rte">{{ address }}</span>
+            {%- endif -%}
+            {%- if block_settings.phone != blank -%}
+              {%- assign tel = block_settings.phone | strip | remove: ' ' -%}
+              <a class="ll-shop-card__phone" href="tel:{{ tel }}">{{ block_settings.phone }}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if block_settings.hours_value_1 != blank or block_settings.hours_value_2 != blank -%}
+          <div class="ll-shop-card__fact">
+            <span class="ll-shop-card__fact-label">{{ block_settings.hours_label | default: 'Opening hours' }}</span>
+            {%- if block_settings.hours_value_1 != blank -%}
+              <span class="ll-shop-card__hours-row">
+                <span>{{ block_settings.hours_days_1 }}</span>
+                <span class="ll-shop-card__hours-time">{{ block_settings.hours_value_1 }}</span>
+              </span>
+            {%- endif -%}
+            {%- if block_settings.hours_value_2 != blank -%}
+              <span class="ll-shop-card__hours-row">
+                <span>{{ block_settings.hours_days_2 }}</span>
+                <span class="ll-shop-card__hours-time">{{ block_settings.hours_value_2 }}</span>
+              </span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="ll-shop-card__actions">
+        {%- if block_settings.link != blank -%}
+          <a class="button ll-shop-card__button" href="{{ block_settings.link }}">
+            {{- block_settings.link_label | default: 'Get directions' -}}
+          </a>
+        {%- endif -%}
+        {%- if block_settings.secondary_link != blank and block_settings.secondary_link_label != blank -%}
+          <a class="ll-shop-card__link" href="{{ block_settings.secondary_link }}">
+            {{- block_settings.secondary_link_label -}}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- else -%}
+      {%- if block_settings.details != blank -%}
+        <div class="ll-shop-card__details rte">{{ block_settings.details }}</div>
+      {%- endif -%}
+      {%- if block_settings.link != blank -%}
+        <a class="ll-shop-card__link" href="{{ block_settings.link }}">
+          {{- block_settings.link_label | default: 'Get directions' -}}
+        </a>
+      {%- endif -%}
     {%- endif -%}
 
     {%- comment -%}
@@ -96,6 +183,7 @@
   }
 
   .ll-shop-card__media {
+    position: relative;
     height: 180px;
     border-block-end: 1px solid var(--ll-stitch-color, #d6cbb1);
   }
@@ -112,6 +200,8 @@
     display: grid;
     place-items: center;
     height: 100%;
+    padding: 16px;
+    text-align: center;
     background: repeating-linear-gradient(45deg, rgb(110 100 84 / 0.1) 0 1px, transparent 1px 8px) var(--ll-paper-tint, #f1ead8);
   }
 
@@ -165,12 +255,182 @@
     display: none;
   }
 
+  /* -- Rows: the About page's full-width shop panels ----------------------- */
+  @media screen and (min-width: 750px) {
+    .ll-shop-card--row {
+      display: grid;
+      grid-template-columns: 25rem minmax(0, 1fr); /* 400px */
+      background: var(--ll-paper-card, #fdfaf0);
+      border-color: var(--ll-border-strong, #c9bc9f);
+      box-shadow: 3px 4px 0 rgb(46 42 36 / 0.1);
+    }
+
+    /* The punched hole belongs to the luggage label, not the panel. */
+    .ll-shop-card--row .ll-shop-card__hole {
+      display: none;
+    }
+
+    .ll-shop-card--row .ll-shop-card__media {
+      height: auto;
+      min-height: 17.5rem; /* 280px */
+      border-block-end: none;
+      border-inline-end: var(--ll-stitch, 2px dashed #d6cbb1);
+    }
+
+    .ll-shop-card--row .ll-shop-card__body {
+      gap: 16px;
+      padding: 28px 32px 30px;
+    }
+
+    .ll-shop-card--row .ll-shop-card__title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+
+    .ll-shop-card--row .ll-shop-card__name {
+      font-size: 1.625rem; /* 26px */
+    }
+
+    .ll-shop-card__since {
+      font-size: 0.8125rem; /* 13px */
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ll-peat, #6e6454);
+    }
+
+    .ll-shop-card__ribbon {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 1;
+      padding: 5px 12px;
+      font-family: var(--font-accent--family);
+      font-weight: 700;
+      font-size: 1.125rem; /* 18px */
+      line-height: 1.2;
+      color: var(--ll-paper, #f8f3e6);
+      rotate: -2deg;
+    }
+
+    .ll-shop-card__ribbon--vermillion {
+      background: var(--ll-vermillion, #bf4a33);
+    }
+
+    .ll-shop-card__ribbon--moor {
+      background: var(--ll-moor, #43573e);
+    }
+
+    .ll-shop-card__blurb {
+      margin: 0;
+      max-width: 35rem; /* 560px */
+      font-size: 0.9375rem; /* 15px */
+      line-height: 1.65;
+      color: var(--ll-peat, #6e6454);
+    }
+
+    .ll-shop-card__facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      border-block-start: var(--ll-stitch, 2px dashed #d6cbb1);
+      padding-block-start: 16px;
+    }
+
+    .ll-shop-card__actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  }
+
+  .ll-shop-card__fact {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ll-shop-card__fact-label {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    /* The design's #B3A78C fails AA at this size on card cream, so the
+       label takes the peat tone (~5.3:1). */
+    color: var(--ll-peat, #6e6454);
+  }
+
+  .ll-shop-card__fact-value,
+  .ll-shop-card__phone,
+  .ll-shop-card__hours-row {
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.6;
+  }
+
+  .ll-shop-card__fact-value p {
+    margin: 0;
+  }
+
+  .ll-shop-card__phone {
+    width: fit-content;
+    color: var(--ll-peat, #6e6454);
+  }
+
+  .ll-shop-card__hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 13.75rem; /* 220px */
+  }
+
+  .ll-shop-card__hours-time {
+    font-weight: 700;
+  }
+
   @media screen and (max-width: 749px) {
     .ll-shop-card__hole {
       top: 8px;
       left: 8px;
       width: 12px;
       height: 12px;
+    }
+
+    /* The mobile card is the same disclosure in both layouts, so the row
+       furniture that has no place on a 390 screen steps out. */
+    .ll-shop-card--row .ll-shop-card__ribbon,
+    .ll-shop-card--row .ll-shop-card__since,
+    .ll-shop-card--row .ll-shop-card__blurb,
+    .ll-shop-card--row .ll-shop-card__actions,
+    .ll-shop-card--row .ll-shop-card__fact-label {
+      display: none;
+    }
+
+    .ll-shop-card--row .ll-shop-card__facts {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ll-shop-card--row .ll-shop-card__fact {
+      gap: 0;
+    }
+
+    .ll-shop-card--row :is(.ll-shop-card__fact-value, .ll-shop-card__phone, .ll-shop-card__hours-row) {
+      font-size: 0.875rem; /* 14px */
+      line-height: 1.5;
+      color: var(--ll-peat, #6e6454);
+    }
+
+    .ll-shop-card--row .ll-shop-card__hours-row {
+      justify-content: flex-start;
+      gap: 8px;
+      max-width: none;
+    }
+
+    .ll-shop-card--row .ll-shop-card__hours-time {
+      font-weight: 400;
     }
 
     /* The whole row is the tap target, at the design's 16px row padding. */
@@ -246,6 +506,10 @@
       font-size: 1rem; /* 16px */
     }
 
+    .ll-shop-card--row .ll-shop-card__name {
+      font-size: 1.25rem; /* 20px */
+    }
+
     .ll-shop-card__details {
       font-size: 0.8125rem; /* 13px */
     }
@@ -259,6 +523,10 @@
   @media (prefers-reduced-motion: reduce) {
     .ll-shop-card__chevron {
       transition: none;
+    }
+
+    .ll-shop-card__ribbon {
+      rotate: none;
     }
   }
 {% endstylesheet %}
@@ -283,13 +551,14 @@
       "type": "richtext",
       "id": "details",
       "label": "Address and hours",
+      "info": "Used by the luggage label layout. The row layout uses the fields below.",
       "default": "<p>Address<br>Open daily 10am–5pm</p>"
     },
     {
       "type": "url",
       "id": "link",
       "label": "Directions link",
-      "info": "Usually a Google Maps link. Shown on desktop only, as designed."
+      "info": "Usually a Google Maps link. Hidden on mobile, as designed."
     },
     {
       "type": "text",
@@ -303,6 +572,106 @@
       "label": "Open by default on mobile",
       "info": "Only one shop can be open at a time. Tick this on the shop you want showing when the page loads.",
       "default": false
+    },
+    {
+      "type": "header",
+      "content": "Row layout"
+    },
+    {
+      "type": "paragraph",
+      "content": "These only show when the section's layout is set to Rows. Mobile shows the address and hours; the rest is desktop only."
+    },
+    {
+      "type": "text",
+      "id": "since",
+      "label": "Open since",
+      "default": "Open since 2015"
+    },
+    {
+      "type": "text",
+      "id": "ribbon",
+      "label": "Ribbon",
+      "info": "Optional sticker across the photo, e.g. Our first."
+    },
+    {
+      "type": "select",
+      "id": "ribbon_color",
+      "label": "Ribbon colour",
+      "options": [
+        {
+          "value": "vermillion",
+          "label": "Vermillion"
+        },
+        {
+          "value": "moor",
+          "label": "Moor green"
+        }
+      ],
+      "default": "vermillion"
+    },
+    {
+      "type": "text",
+      "id": "blurb",
+      "label": "One-line description"
+    },
+    {
+      "type": "text",
+      "id": "address_label",
+      "label": "Address label",
+      "default": "Find us"
+    },
+    {
+      "type": "richtext",
+      "id": "address",
+      "label": "Address",
+      "info": "Falls back to Address and hours above when empty."
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours label",
+      "default": "Opening hours"
+    },
+    {
+      "type": "text",
+      "id": "hours_days_1",
+      "label": "Hours — first days",
+      "default": "Mon–Fri"
+    },
+    {
+      "type": "text",
+      "id": "hours_value_1",
+      "label": "Hours — first times",
+      "default": "10am–5pm"
+    },
+    {
+      "type": "text",
+      "id": "hours_days_2",
+      "label": "Hours — second days",
+      "default": "Sat–Sun"
+    },
+    {
+      "type": "text",
+      "id": "hours_value_2",
+      "label": "Hours — second times",
+      "default": "10am–5pm"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Second link",
+      "info": "Usually the shop's collection, e.g. See what's in this shop."
+    },
+    {
+      "type": "text",
+      "id": "secondary_link_label",
+      "label": "Second link label",
+      "default": "See what's in this shop"
     }
   ]
 }

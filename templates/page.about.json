@@ -9,53 +9,456 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "main-page",
+    "ll_about_hero": {
+      "type": "media-with-content",
       "blocks": {
-        "heading": {
-          "type": "text",
-          "name": "t:names.title",
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
           "settings": {
-            "text": "<h1>{{ closest.page.title }}</h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "media_type": "image",
+            "image_position": "cover"
+          }
         },
-        "page-content": {
-          "type": "page-content",
-          "settings": {},
-          "blocks": {}
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 18
+          },
+          "blocks": {
+            "hero_aside": {
+              "type": "ll-hand-aside",
+              "settings": {
+                "text": "Our story — since 2015",
+                "font_size": "1.5rem",
+                "rotation": -1.5
+              }
+            },
+            "hero_heading": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h1>Eleven years, three shops, one cobbled hill</h1>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h1",
+                "font": "var(--font-heading--family)",
+                "line_height": "tight",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "hero_text": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>",
+                "width": "100%",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "hero_buttons": {
+              "type": "group",
+              "name": "t:names.buttons",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "gap": 14,
+                "width": "fill",
+                "width_mobile": "fill",
+                "height": "fit"
+              },
+              "blocks": {
+                "hero_button_primary": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Read the story",
+                    "link": "#ll-about-timeline",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "width": "fit-content",
+                    "width_mobile": "fill"
+                  }
+                },
+                "hero_button_secondary": {
+                  "type": "button",
+                  "name": "t:names.button",
+                  "settings": {
+                    "label": "Find a shop",
+                    "link": "#ll-about-shops",
+                    "open_in_new_tab": false,
+                    "style_class": "button-secondary",
+                    "width": "fit-content",
+                    "width_mobile": "fill"
+                  }
+                }
+              },
+              "block_order": ["hero_button_primary", "hero_button_secondary"]
+            },
+            "hero_stats": {
+              "type": "ll-stat-card",
+              "settings": {
+                "desktop_position": "overhang",
+                "rotation": -1.5
+              },
+              "blocks": {
+                "stat_first": {
+                  "type": "_ll-stat",
+                  "settings": {
+                    "stat": "2015",
+                    "label": "First shop"
+                  }
+                },
+                "stat_shops": {
+                  "type": "_ll-stat",
+                  "settings": {
+                    "stat": "3",
+                    "label": "Shops today"
+                  }
+                },
+                "stat_reviews": {
+                  "type": "_ll-stat",
+                  "settings": {
+                    "stat": "212",
+                    "label": "5★ reviews"
+                  }
+                }
+              },
+              "block_order": ["stat_first", "stat_shops", "stat_reviews"]
+            }
+          },
+          "block_order": ["hero_aside", "hero_heading", "hero_text", "hero_buttons", "hero_stats"]
+        }
+      },
+      "name": "t:names.media_with_content",
+      "settings": {
+        "media_position": "right",
+        "media_width": "medium",
+        "media_height": "auto",
+        "section_width": "page-width",
+        "extend_media": false,
+        "background_color": "#EFE7D2",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "ll_about_timeline": {
+      "type": "ll-timeline",
+      "blocks": {
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "text": "— t'long way round, mostly",
+            "font_size": "1.5rem",
+            "rotation": -1
+          }
+        },
+        "milestone_2015": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2015",
+            "year_note": "where it starts",
+            "title": "A small shop in Haworth",
+            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>",
+            "note": "rent were £00 a month, mind",
+            "show_placeholder": true,
+            "placeholder_note": "Photo — opening day, Main Street"
+          }
+        },
+        "milestone_2018": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2018",
+            "year_note": "a name of our own",
+            "title": "Northerner® registered",
+            "text": "<p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur, excepteur sint occaecat cupidatat non proident.</p>",
+            "show_placeholder": true,
+            "placeholder_note": "Artwork — first Northerner® print"
+          }
+        },
+        "milestone_2020": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2020",
+            "year_note": "shut door, open post",
+            "title": "Wrapping parcels at t'kitchen table",
+            "text": "<p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p>",
+            "show_placeholder": false
+          }
+        },
+        "milestone_2021": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2021",
+            "year_note": "shop number two",
+            "title": "Skipton opens on t'high street",
+            "text": "<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure.</p>",
+            "show_placeholder": true,
+            "placeholder_note": "Photo — Skipton shopfront"
+          }
+        },
+        "milestone_2024": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "2024",
+            "year_note": "and number three",
+            "title": "Harrogate, in t'Montpellier Quarter",
+            "text": "<p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum sed do eiusmod.</p>",
+            "show_placeholder": true,
+            "placeholder_note": "Photo — Harrogate window"
+          }
+        },
+        "milestone_today": {
+          "type": "_ll-milestone",
+          "settings": {
+            "year": "Today",
+            "year_note": "still up t'hill",
+            "title": "Three shops, one workroom, same pens",
+            "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>",
+            "show_placeholder": false
+          }
         }
       },
       "block_order": [
-        "heading",
-        "page-content"
+        "milestone_2015",
+        "milestone_2018",
+        "milestone_2020",
+        "milestone_2021",
+        "milestone_2024",
+        "milestone_today"
       ],
+      "name": "Timeline",
       "settings": {
-        "content_direction": "column",
-        "gap": 32,
-        "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 40,
+        "heading": "How we got here",
+        "mobile_hint": "swipe to follow t'story →→",
+        "background_color": "#F8F3E6",
+        "show_seam": false,
+        "anchor": "ll-about-timeline",
+        "padding-block-start": 72,
         "padding-block-end": 80
+      }
+    },
+    "ll_about_shops": {
+      "type": "ll-shop-cards",
+      "blocks": {
+        "aside": {
+          "type": "ll-hand-aside",
+          "static": true,
+          "settings": {
+            "text": "— come say ey up",
+            "font_size": "1.5rem",
+            "rotation": -1
+          }
+        },
+        "shop_haworth": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Haworth",
+            "since": "Open since 2015",
+            "ribbon": "Our first",
+            "ribbon_color": "vermillion",
+            "blurb": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
+            "details": "<p>Address 1<br>Open daily 10am–5pm</p>",
+            "address_label": "Find us",
+            "address": "<p>Address 1</p>",
+            "phone": "01535 957410",
+            "hours_label": "Opening hours",
+            "hours_days_1": "Mon–Fri",
+            "hours_value_1": "10am–5pm",
+            "hours_days_2": "Sat–Sun",
+            "hours_value_2": "10am–5pm",
+            "link_label": "Get directions",
+            "secondary_link_label": "See what's in this shop",
+            "mobile_open": true
+          }
+        },
+        "shop_skipton": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Skipton",
+            "since": "Open since 2021",
+            "blurb": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+            "details": "<p>Address 2<br>Open daily 10am–5pm</p>",
+            "address_label": "Find us",
+            "address": "<p>Address 2</p>",
+            "hours_label": "Opening hours",
+            "hours_days_1": "Mon–Fri",
+            "hours_value_1": "10am–5pm",
+            "hours_days_2": "Sat–Sun",
+            "hours_value_2": "10am–5pm",
+            "link_label": "Get directions",
+            "secondary_link_label": "See what's in this shop",
+            "mobile_open": false
+          }
+        },
+        "shop_harrogate": {
+          "type": "_ll-shop-card",
+          "settings": {
+            "name": "Harrogate",
+            "since": "Open since 2024",
+            "ribbon": "Newest",
+            "ribbon_color": "moor",
+            "blurb": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.",
+            "details": "<p>Address 3<br>Open daily 10am–5pm</p>",
+            "address_label": "Find us",
+            "address": "<p>Address 3</p>",
+            "hours_label": "Opening hours",
+            "hours_days_1": "Mon–Fri",
+            "hours_value_1": "10am–5pm",
+            "hours_days_2": "Sat–Sun",
+            "hours_value_2": "10am–5pm",
+            "link_label": "Get directions",
+            "secondary_link_label": "See what's in this shop",
+            "mobile_open": false
+          }
+        }
+      },
+      "block_order": ["shop_haworth", "shop_skipton", "shop_harrogate"],
+      "name": "Shop cards",
+      "settings": {
+        "layout": "rows",
+        "heading": "Three shops across Yorkshire",
+        "background_color": "#EFE7D2",
+        "show_seam": true,
+        "anchor": "ll-about-shops",
+        "padding-block-start": 64,
+        "padding-block-end": 72
+      }
+    },
+    "ll_about_press": {
+      "type": "section",
+      "blocks": {
+        "press_rating": {
+          "type": "group",
+          "name": "t:names.group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": true,
+            "gap": 12,
+            "width": "fit-content",
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "press_rating_text": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p><strong>4.9 from 212 Judge.me reviews</strong></p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            },
+            "press_rating_link": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p><a href=\"/pages/reviews\">Read all</a></p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              }
+            }
+          },
+          "block_order": ["press_rating_text", "press_rating_link"]
+        },
+        "press_logos": {
+          "type": "group",
+          "name": "t:names.group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-end",
+            "vertical_alignment": "center",
+            "gap": 24,
+            "width": "fit-content",
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "press_logo_1": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "landscape",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            },
+            "press_logo_2": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "landscape",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            },
+            "press_logo_3": {
+              "type": "image",
+              "name": "t:names.image",
+              "settings": {
+                "image_ratio": "landscape",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              }
+            }
+          },
+          "block_order": ["press_logo_1", "press_logo_2", "press_logo_3"]
+        }
+      },
+      "block_order": ["press_rating", "press_logos"],
+      "name": "t:names.section",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center",
+        "gap": 40,
+        "section_width": "page-width",
+        "section_height": "",
+        "padding-block-start": 44,
+        "padding-block-end": 44
       }
     }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["ll_about_hero", "ll_about_timeline", "ll_about_shops", "ll_about_press"]
 }
